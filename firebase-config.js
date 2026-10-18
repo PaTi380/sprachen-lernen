@@ -10,10 +10,10 @@
    Solange apiKey leer ist, speichert das Programm nur lokal.
    ============================================================ */
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDf2bjO4aMP9OjL8_Kj7PJAUHVk-sIcPGM",
+  authDomain: "sprachen-lernen-c8b4b.firebaseapp.com",
+  projectId: "sprachen-lernen-c8b4b",
+  storageBucket: "sprachen-lernen-c8b4b.firebasestorage.app",
+  messagingSenderId: "574548749172",
+  appId: "1:574548749172:web:4cc6753f48ab6f96129a21"
 };
