@@ -188,6 +188,7 @@ td small{color:var(--muted)}
 .nbt{display:flex;flex-direction:column;gap:6px;flex:none}
 .nbt button{padding:8px 12px;font-size:.9rem}
 @media (max-width:440px){.node{flex-wrap:wrap}.nbt{flex-direction:row;width:100%}.nbt button{flex:1}}
+.ver{font-size:.68rem;font-weight:600;color:var(--muted);margin-left:6px;vertical-align:middle;letter-spacing:0}.who{align-self:center;font-size:.9rem;color:var(--muted);white-space:nowrap}@media(max-width:560px){.who{display:none}}
 </style>
 </head>
 <body>
@@ -3336,7 +3337,7 @@ const INTERVALS=[0,1,3,7,14,30,60];
 const defaults=()=>({items:{},xp:0,streak:0,lastDay:null,hist:{},gram:{},path:{},badges:{},hi:{},bestCombo:0,settings:{sfx:true,speak:false,rate:0.9,voice:'',newPer:5,sessionLen:12,translit:true,autoplay:true,keyboard:true,unlockAll:false}});
 let S=load();
 function load(){try{const d=JSON.parse(localStorage.getItem(KEY));if(d){const df=defaults();return Object.assign(df,d,{settings:Object.assign(df.settings,d.settings||{})})}}catch(e){}return defaults()}
-function save(){S._ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof cloudQueue==='function')cloudQueue()}
+function save(){S._ts=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}if(typeof touchLast==='function')touchLast();if(typeof cloudQueue==='function')cloudQueue()}
 const $=s=>document.querySelector(s);
 const today=()=>new Date().toLocaleDateString('sv-SE');
 function touchDay(){const t=today();if(S.lastDay!==t){const y=new Date(Date.now()-DAY).toLocaleDateString('sv-SE');S.streak=S.lastDay===y?S.streak+1:1;S.lastDay=t}}
@@ -3482,13 +3483,13 @@ function render(){
   if(NAVV.includes(view)){app.insertAdjacentHTML('beforeend',navHTML());window.scrollTo(0,0)}
 }
 function chooseHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span></div><div class="nav"><button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'👤 '+esc(USER||'')}</button></div></div>
-<h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 12px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.00</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
+<h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 4px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>${lastLine()}
 <div class="units">${LANGS.map(l=>`<div class="card unit" ${l.id===LANGID?'style="border:2px solid var(--blue2)"':''}><span class="ico">${l.flag}</span><h3>${esc(l.name)}</h3><p>${esc(l.native)} · ${esc(l.desc)}</p><div class="row"><button class="primary" onclick="setLang('${l.id}')">${l.id===LANGID?'Weiter':'Lernen'}</button></div></div>`).join('')}</div>`;
 }
 function setLang(id){try{localStorage.setItem('sprachen_lernen_lang_'+USER,id)}catch(e){}if(CLOUD.on&&CLOUD.user&&!DEMO){CLOUD.db.doc('users/'+USER).set({lang:id,name:USER},{merge:true}).catch(()=>{})}if(CLOUD.t){clearTimeout(CLOUD.t);cloudPush()}if(id===LANGID){go('home');return}location.reload()}
 function loginHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.00</small></div></div>
 <div class="card" style="max-width:420px;margin:20px auto"><h2 style="margin-top:0">Anmelden</h2><p class="meta">Wer lernt heute? Jeder hat seinen eigenen Fortschritt.${CLOUD.on?' <br>☁️ Dein Fortschritt wird online gesichert und ist auf allen Geräten verfügbar.':''}</p>
 <div class="opts" style="grid-template-columns:1fr 1fr">${USERS.map(u=>`<button class="opt" id="u_${u}" onclick="pickUser('${u}')">${esc(u)}</button>`).join('')}</div>
 <div style="margin-top:14px"><input id="pw" class="txt" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -3607,8 +3608,20 @@ function cardRate(r){
 document.addEventListener('keydown',e=>{if(view!=='cards'||!FC||FC.done||e.target.tagName==='INPUT')return;
   if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!FC.flip)cardFlip()}
   else if(FC.flip&&['1','2','3'].includes(e.key))cardRate(+e.key-1)});
-const APP_VERSION='2026-10-18.2';
-const CLOUD={dev:Math.random().toString(36).slice(2,8),on:!!(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.apiKey),user:null,st:'off',base:0,t:null,ready:null,lastOk:0,bkDay:null,out:false};
+const APP_VERSION='2026-10-18.4';
+let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
+if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
+const LAST={t0:Date.now(),prev:null};
+function lastKey(){return 'sprachen_lernen_last_'+(USER||'')}
+function lastConsider(x){if(!x||!x.ts||x.dev===DEV||x.ts>=LAST.t0-1000)return;if(!LAST.prev||x.ts>LAST.prev.ts){LAST.prev={ts:x.ts,lang:x.lang||null};try{sessionStorage.setItem('sprachen_lernen_lastprev_'+USER,JSON.stringify(LAST.prev))}catch(e){}}}
+try{if(USER){const sp=JSON.parse(sessionStorage.getItem('sprachen_lernen_lastprev_'+USER)||'null');if(sp&&sp.ts)LAST.prev=sp;lastConsider(JSON.parse(localStorage.getItem(lastKey())||'null'))}}catch(e){}
+function touchLast(){if(DEMO||!USER)return;try{localStorage.setItem(lastKey(),JSON.stringify({ts:Date.now(),lang:LANGID||null,dev:DEV}))}catch(e){}}
+touchLast();
+function lastFmt(ts){const d=new Date(ts),n=new Date(),day=d.toLocaleDateString('sv-SE'),tm=d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});if(day===n.toLocaleDateString('sv-SE'))return 'heute um '+tm;if(day===new Date(Date.now()-864e5).toLocaleDateString('sv-SE'))return 'gestern um '+tm;return d.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'})+' um '+tm}
+function lastLine(){if(DEMO||!USER)return '';const p=LAST.prev;if(!p)return `<p class="meta lastline" id="lastline">🕒 Dein erster Start – willkommen, ${esc(USER)}!</p>`;const ln=p.lang&&LANGS.find(x=>x.id===p.lang);const l=ln?' · '+esc(ln.name):'';return `<p class="meta lastline" id="lastline">🕒 Zuletzt genutzt: ${lastFmt(p.ts)}${l}</p>`}
+function lastRefresh(){const e=document.getElementById('lastline');if(e)e.outerHTML=lastLine()}
+
+const CLOUD={dev:DEV,on:!!(window.FIREBASE_CONFIG&&window.FIREBASE_CONFIG.apiKey),user:null,st:'off',base:0,t:null,ready:null,lastOk:0,bkDay:null,out:false};
 const FBV='10.12.2';
 function cloudBadge(){if(!CLOUD.on||DEMO)return '';return {ok:'☁️✓',wait:'☁️…',off:'☁️',err:'☁️⚠️',offline:'📴'}[CLOUD.st]||'☁️'}
 function cloudText(){return {ok:'Gesichert'+(CLOUD.lastOk?' um '+new Date(CLOUD.lastOk).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}):''),wait:'Wird gesichert …',off:'Verbinde …',err:'Fehler bei der Sicherung – wird erneut versucht',offline:'Offline – wird nachgeholt, sobald Internet da ist'}[CLOUD.st]||''}
@@ -3636,6 +3649,8 @@ async function cloudStart(){
   cloudSet('wait');
   try{
     const meta=await CLOUD.db.doc('users/'+USER).get();
+    if(meta.exists&&meta.data().last){lastConsider(meta.data().last);lastRefresh()}
+    CLOUD.db.doc('users/'+USER).set({name:USER,last:{ts:Date.now(),lang:LANGID||null,dev:DEV}},{merge:true}).catch(()=>{});
     if(!LANGID&&meta.exists&&meta.data().lang&&PACK[meta.data().lang]){try{localStorage.setItem('sprachen_lernen_lang_'+USER,meta.data().lang)}catch(e){}location.reload();return}
     if(!LANGID){cloudSet('ok');return}
     await cloudPull();
@@ -3665,6 +3680,7 @@ async function cloudPush(manual){
     const data=JSON.stringify(S),ts=S._ts||Date.now();
     await ref.set({data:data,ts:ts,lang:LANG.id,device:(navigator.userAgent||'').slice(0,90)+'#'+CLOUD.dev,saved:firebase.firestore.FieldValue.serverTimestamp()});
     CLOUD.base=ts;
+    CLOUD.db.doc('users/'+USER).set({last:{ts:Date.now(),lang:LANG.id,dev:DEV}},{merge:true}).catch(()=>{});
     const day=today();
     if(CLOUD.bkDay!==day){
       const col=CLOUD.db.collection('users/'+USER+'/backups');
@@ -3707,8 +3723,8 @@ function checkUpdate(){
 }
 if(typeof location!=='undefined'&&/^https?:/.test(location.protocol)){setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,15000)}
 function go(v,arg){if(v!=='vocab')VPLAY=null;if(TTS)speechSynthesis.cancel();clearTimers();view=v;viewArg=arg;render()}
-function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span></div>
-<div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button><button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden ('+esc(USER||'')+')'}">${DEMO?'🎬 Ende':'👤 '+esc(USER||'')}</button></div></div>`}
+function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.00</small></div>
+<div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
 function unitProgress(u){
   const ids=ALL.filter(i=>i.unit===u.id);
   const seen=ids.filter(i=>S.items[i.id]&&S.items[i.id].seen>0).length;
@@ -3719,7 +3735,7 @@ function homeHTML(){
   const due=dueCount();
   const h=S.hist[today()]||{n:0};
   const goal=20;
-  return topbar()+`
+  return topbar()+lastLine()+`
 <div class="stats">
   <div class="stat"><b>🔥 ${S.lastDay===today()||S.lastDay===new Date(Date.now()-DAY).toLocaleDateString('sv-SE')?S.streak:0}</b><small>Tage am Stück</small></div>
   <div class="stat"><b>⭐ ${S.xp}</b><small>Punkte</small></div>
@@ -3787,7 +3803,7 @@ ${CLOUD.on&&!DEMO?`<p class="meta">☁️ Dein Fortschritt wird automatisch onli
 <div class="field"><label>Alles exportieren<small>Alle Sprachen von ${esc(USER||'')} als Datei – Notfallkopie</small></label><button onclick="exportAll()">⬇ Datei</button></div>
 <div class="field"><label>Aus Datei wiederherstellen<small>Sicherungsdatei einlesen (alle Sprachen oder eine)</small></label><button onclick="$('#imp').click()">⬆ Datei</button></div>
 <div class="field"><label>Diese Sprache zurücksetzen<small>Löscht den Fortschritt in ${esc(LANG.name)}</small></label><button class="ghost" onclick="resetData()">Zurücksetzen</button></div>
-<p class="meta" style="margin-top:10px">Version ${APP_VERSION}</p>
+<p class="meta" style="margin-top:10px">Version 1.00 · Build ${APP_VERSION}</p>
 <input id="imp" type="file" accept=".json" hidden onchange="importData(this.files[0])"></div>`;
 }
 function exportData(){const b=new Blob([JSON.stringify(S)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(USER||'gast').toLowerCase()+'-'+LANG.exportName;a.click()}
