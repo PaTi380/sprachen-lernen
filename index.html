@@ -3360,11 +3360,15 @@ const TTS='speechSynthesis' in window;
 function loadVoices(){if(TTS)voices=speechSynthesis.getVoices()||[]}
 if(TTS){loadVoices();speechSynthesis.onvoiceschanged=()=>{loadVoices();if(view==='settings')render()}}
 function greekVoice(){if(S.settings.voice){const v=voices.find(v=>v.voiceURI===S.settings.voice);if(v)return v}return voices.find(v=>LANG.voiceRe.test(v.lang))||null}
+let SPK=0;
+function stopSpeech(){SPK++;try{if(TTS)speechSynthesis.cancel()}catch(e){}}
 function speak(text,slow){
   if(!TTS){toast('Dieser Browser unterstützt keine Sprachausgabe.');return}
+  const tk=++SPK;try{VPLAY=null}catch(e){}
   speechSynthesis.cancel();
   setTimeout(()=>{
-    const u=new SpeechSynthesisUtterance(text);u.lang=LANG.tts;
+    if(tk!==SPK)return;
+    const u=new SpeechSynthesisUtterance(text);u.lang=LANG.tts;u.onstart=()=>{if(tk!==SPK)speechSynthesis.cancel()};window._utt=u;
     const v=greekVoice();
     if(v){u.voice=v}else if(!warned){warned=true;toast('Keine '+LANG.voiceAdj+' Stimme gefunden – bitte in den Systemeinstellungen eine installieren.')}
     u.rate=slow?Math.min(.55,S.settings.rate):S.settings.rate;
@@ -3491,13 +3495,13 @@ function render(){
   if(NAVV.includes(view)){app.insertAdjacentHTML('beforeend',navHTML());window.scrollTo(0,0)}
 }
 function chooseHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.00</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.01</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
 <h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 4px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>${lastLine()}
 <div class="units">${LANGS.map(l=>`<div class="card unit" ${l.id===LANGID?'style="border:2px solid var(--blue2)"':''}><span class="ico">${l.flag}</span><h3>${esc(l.name)}</h3><p>${esc(l.native)} · ${esc(l.desc)}</p><div class="row"><button class="primary" onclick="setLang('${l.id}')">${l.id===LANGID?'Weiter':'Lernen'}</button></div></div>`).join('')}</div>`;
 }
 function setLang(id){try{localStorage.setItem('sprachen_lernen_lang_'+USER,id)}catch(e){}if(CLOUD.on&&CLOUD.user&&!DEMO){CLOUD.db.doc('users/'+USER).set({lang:id,name:USER},{merge:true}).catch(()=>{})}if(CLOUD.t){clearTimeout(CLOUD.t);cloudPush()}if(id===LANGID){go('home');return}location.reload()}
 function loginHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.00</small></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.01</small></div></div>
 <div class="card" style="max-width:420px;margin:20px auto"><h2 style="margin-top:0">Anmelden</h2><p class="meta">Wer lernt heute? Jeder hat seinen eigenen Fortschritt.${CLOUD.on?' <br>☁️ Dein Fortschritt wird online gesichert und ist auf allen Geräten verfügbar.':''}</p>
 <div class="opts" style="grid-template-columns:1fr 1fr">${USERS.map(u=>`<button class="opt" id="u_${u}" onclick="pickUser('${u}')">${esc(u)}</button>`).join('')}</div>
 <div style="margin-top:14px"><input id="pw" class="txt" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -3564,8 +3568,8 @@ function vocabStop(){VPLAY=null;if(TTS)speechSynthesis.cancel()}
 function vocabPlayAll(){
   if(!TTS){toast('Dieser Browser unterstützt keine Sprachausgabe.');return}
   const a=vocabFiltered();if(!a.length)return;
-  vocabStop();const tok={};VPLAY=tok;const v=greekVoice();const dv=voices.find(x=>/^de/i.test(x.lang))||null;let k=0;
-  const say=(t,lang,voice,next)=>{if(VPLAY!==tok)return;const u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;u.rate=S.settings.rate;u.onend=()=>setTimeout(next,450);u.onerror=()=>setTimeout(next,450);speechSynthesis.speak(u)};
+  vocabStop();stopSpeech();const tok={};VPLAY=tok;const v=greekVoice();const dv=voices.find(x=>/^de/i.test(x.lang))||null;let k=0;
+  const say=(t,lang,voice,next)=>{if(VPLAY!==tok)return;const u=new SpeechSynthesisUtterance(t);u.lang=lang;if(voice)u.voice=voice;u.rate=S.settings.rate;u.onstart=()=>{if(VPLAY!==tok)speechSynthesis.cancel()};window._utt=u;u.onend=()=>setTimeout(next,450);u.onerror=()=>setTimeout(next,450);speechSynthesis.speak(u)};
   const step=()=>{if(VPLAY!==tok||k>=a.length){if(VPLAY===tok)VPLAY=null;return}const i=a[k++];say(i.say,LANG.tts,v,()=>VS.de?say(i.de.replace(/[()\/]/g,' '),'de-DE',dv,step):step())};
   speechSynthesis.cancel();setTimeout(step,60);toast('Spiele '+a.length+' Wörter ab …');
 }
@@ -3596,7 +3600,7 @@ ${f.flip?`<div class="rate"><button class="r0" onclick="cardRate(0)">❌ Nicht g
 <p class="meta center" style="margin-top:12px">Sei ehrlich zu dir: Was du nicht wusstest, kommt am Ende des Stapels nochmal und bald wieder in die Wiederholung.</p>`;
 }
 function cardFlip(){if(!FC||FC.done)return;FC.flip=!FC.flip;render();if(FC.flip&&S.settings.autoplay)speak(FC.cur.say)}
-function cardRate(r){
+function cardRate(r){stopSpeech();
   const f=FC;if(!f||!f.flip)return;const it=f.cur;
   const st=S.items[it.id]||(S.items[it.id]={box:0,due:0,seen:0,ok:0,bad:0});
   touchDay();const h=S.hist[today()]||(S.hist[today()]={n:0,ok:0});
@@ -3616,7 +3620,7 @@ function cardRate(r){
 document.addEventListener('keydown',e=>{if(view!=='cards'||!FC||FC.done||e.target.tagName==='INPUT')return;
   if(e.key===' '||e.key==='Enter'){e.preventDefault();if(!FC.flip)cardFlip()}
   else if(FC.flip&&['1','2','3'].includes(e.key))cardRate(+e.key-1)});
-const APP_VERSION='2026-10-21.1';
+const APP_VERSION='2026-10-24.1';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -3730,8 +3734,8 @@ function checkUpdate(){
   fetch(location.pathname,{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APP_VERSION='([^']+)'/);if(m&&m[1]!==APP_VERSION&&!document.getElementById('updbar')){const d=document.createElement('div');d.id='updbar';d.className='toast';d.style.cssText='bottom:90px;cursor:pointer';d.innerHTML='🔄 Neue Version verfügbar – hier tippen zum Aktualisieren';d.onclick=()=>location.reload();document.body.appendChild(d)}}).catch(()=>{});
 }
 if(typeof location!=='undefined'&&/^https?:/.test(location.protocol)){setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,15000)}
-function go(v,arg){if(v!=='vocab')VPLAY=null;if(TTS)speechSynthesis.cancel();clearTimers();view=v;viewArg=arg;render()}
-function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.00</small></div>
+function go(v,arg){if(v!=='vocab')VPLAY=null;stopSpeech();clearTimers();view=v;viewArg=arg;render()}
+function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.01</small></div>
 <div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
 function unitProgress(u){
   const ids=ALL.filter(i=>i.unit===u.id);
@@ -3811,7 +3815,7 @@ ${CLOUD.on&&!DEMO?`<p class="meta">☁️ Dein Fortschritt wird automatisch onli
 <div class="field"><label>Alles exportieren<small>Alle Sprachen von ${esc(USER||'')} als Datei – Notfallkopie</small></label><button onclick="exportAll()">⬇ Datei</button></div>
 <div class="field"><label>Aus Datei wiederherstellen<small>Sicherungsdatei einlesen (alle Sprachen oder eine)</small></label><button onclick="$('#imp').click()">⬆ Datei</button></div>
 <div class="field"><label>Diese Sprache zurücksetzen<small>Löscht den Fortschritt in ${esc(LANG.name)}</small></label><button class="ghost" onclick="resetData()">Zurücksetzen</button></div>
-<p class="meta" style="margin-top:10px">Version 1.00 · Build ${APP_VERSION}</p>
+<p class="meta" style="margin-top:10px">Version 1.01 · Build ${APP_VERSION}</p>
 <input id="imp" type="file" accept=".json" hidden onchange="importData(this.files[0])"></div>`;
 }
 function exportData(){const b=new Blob([JSON.stringify(S)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(USER||'gast').toLowerCase()+'-'+LANG.exportName;a.click()}
@@ -3892,7 +3896,7 @@ function submitTyped(){
 }
 function hint(){const it=cur.it;const g=target(it);$('#hint').textContent='Tipp: beginnt mit „'+g.slice(0,2)+'…“'+(it.tr?' · '+it.tr:'')}
 function giveUp(){if(cur.answered)return;cur.answered=true;const a=$('#ans');if(a)a.disabled=true;feedback(false)}
-function skipQ(){if(TTS)speechSynthesis.cancel();nextQ()}
+function skipQ(){stopSpeech();nextQ()}
 function feedback(ok,note){
   const it=cur.it;
   if(ok&&cur.type!=='mc-gr-de'&&cur.type!=='speak')speak(it.say);
@@ -3904,7 +3908,7 @@ function feedback(ok,note){
   const nb=$('#nextbtn');if(nb)nb.focus();
   $('#fb').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function next(){if(TTS)speechSynthesis.cancel();nextQ()}
+function next(){stopSpeech();nextQ()}
 document.addEventListener('keydown',e=>{if(e.key==='Enter'&&view==='session'&&cur&&(cur.answered||cur.type==='intro')&&document.activeElement.tagName!=='BUTTON'){e.preventDefault();next()}});
 
 /* ---------- Diktat über das Tastatur-Mikrofon ---------- */
@@ -4012,7 +4016,7 @@ function renderLearn(){
 <div class="actions">${L.p>0?'<button class="ghost" onclick="learnStep(-1)">Zurück</button>':''}<button class="primary" onclick="learnStep(1)">${last?'Übungen starten':'Weiter'}</button></div>`;
   window.scrollTo(0,0);
 }
-function learnStep(d){L.p+=d;if(L.p>=L.g.learn.length){L.mode='q';nextLQ()}else renderLearn()}
+function learnStep(d){stopSpeech();L.p+=d;if(L.p>=L.g.learn.length){L.mode='q';nextLQ()}else renderLearn()}
 function nextLQ(){if(L.over)return finishRun();if(!L.Q.length)return finishRun();L.cur=L.Q.shift();L.cur.done=false;renderLQ()}
 const gapify=s=>esc(s).replace('___','<span class="gap">&nbsp;&nbsp;&nbsp;&nbsp;</span>');
 function fullOf(q){if(q.full)return q.full;if(q.t==='arr')return q.a;if(q.t==='match')return q.pairs.map(p=>p[0]+' = '+p[1]).join(' · ');return q.q.replace('___',q.a)}
@@ -4094,7 +4098,7 @@ function lfeedback(ok,note){
   const nb=$('#nextbtn');if(nb)nb.focus();
   if(fb.scrollIntoView)fb.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function lnext(){if(TTS)speechSynthesis.cancel();if(L.over)return finishRun();nextLQ()}
+function lnext(){stopSpeech();if(L.over)return finishRun();nextLQ()}
 function gameDone(o){
   clearTimers();
   const x0=o.xp0!=null?o.xp0:S.xp;
@@ -4504,8 +4508,8 @@ function dlgHTML(l){
 }
 function playDlg(id){
   const l=NODEBY[id];if(!TTS){toast('Dieser Browser unterstützt keine Sprachausgabe.');return}
-  speechSynthesis.cancel();const v=greekVoice();let i=0;
-  const nx=()=>{if(i>=l.D.length)return;const u=new SpeechSynthesisUtterance(l.D[i++].say);u.lang=LANG.tts;if(v)u.voice=v;u.rate=S.settings.rate;u.onend=()=>setTimeout(nx,350);speechSynthesis.speak(u)};
+  stopSpeech();const tk=SPK;const v=greekVoice();let i=0;
+  const nx=()=>{if(tk!==SPK||i>=l.D.length)return;const u=new SpeechSynthesisUtterance(l.D[i++].say);u.lang=LANG.tts;if(v)u.voice=v;u.rate=S.settings.rate;u.onstart=()=>{if(tk!==SPK)speechSynthesis.cancel()};u.onend=()=>setTimeout(nx,350);window._utt=u;speechSynthesis.speak(u)};
   setTimeout(nx,40);
 }
 function chunk(a,n){const o=[];for(let i=0;i<a.length;i+=n)o.push(a.slice(i,i+n));return o}
