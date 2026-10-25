@@ -197,6 +197,13 @@ td small{color:var(--muted)}
 .nbt button{padding:8px 12px;font-size:.9rem}
 @media (max-width:440px){.node{flex-wrap:wrap}.nbt{flex-direction:row;width:100%}.nbt button{flex:1}}
 .ver{font-size:.68rem;font-weight:600;color:var(--muted);margin-left:6px;vertical-align:middle;letter-spacing:0}.who{align-self:center;font-size:.9rem;color:var(--muted);white-space:nowrap}@media(max-width:560px){.who{display:none}}
+.chart.c14{gap:4px}.chart.c14 div{font-size:.62rem}
+:root[data-theme=dark]{--bg:#0e1626;--card:#16213a;--ink:#e8eefc;--muted:#9aa8c7;--line:#27355a;--blue:#4c9bf0;--blue2:#6cb0ff;--soft:#1b2d52;--good:#43c985;--goodbg:#12362a;--bad:#ff7378;--badbg:#3a1c20;--gold:#f5b73a;--shadow:0 2px 10px rgba(0,0,0,.35)}
+@media (prefers-color-scheme:dark){:root[data-theme=light]{
+  --bg:#f4f7fb;--card:#ffffff;--ink:#14213d;--muted:#5f6b85;--line:#dde4f0;
+  --blue:#0d5eaf;--blue2:#1f7ae0;--soft:#e6f0fc;--good:#1b9e5a;--goodbg:#e4f7ec;--bad:#d64045;--badbg:#fdeaea;--gold:#f0a500;
+  --shadow:0 2px 10px rgba(20,33,61,.08);
+}}
 </style>
 </head>
 <body>
@@ -1462,9 +1469,58 @@ REF=[
 ];
 })();
 
+
+/* ============================================================
+   GRIECHISCH – Leseverstehen (8 Kurztexte, A1)
+   {id, title, after (Lektion, die freischaltet), text:[Satz…], de:[Übersetzung…],
+    gloss:[[Wort, Deutsch]…], qs:[[Frage, richtige Antwort, [falsche Antworten]]…]}
+   ============================================================ */
+var READ=[
+{id:'r1',title:'Γεια σας, είμαι η Ελένη',after:'l04',icon:'👋',
+ text:['Γεια σας! Με λένε Ελένη.','Είμαι από την Αθήνα.','Είμαι τριάντα χρονών.','Μένω στη Θεσσαλονίκη με τον άντρα μου.','Ο άντρας μου λέγεται Νίκος.','Είμαι δασκάλα και μιλάω ελληνικά και αγγλικά.','Μαθαίνω γερμανικά.'],
+ de:['Hallo! Ich heiße Eleni.','Ich bin aus Athen.','Ich bin dreißig Jahre alt.','Ich wohne in Thessaloniki mit meinem Mann.','Mein Mann heißt Nikos.','Ich bin Lehrerin und spreche Griechisch und Englisch.','Ich lerne Deutsch.'],
+ gloss:[['χρονών','Jahre alt'],['ο άντρας μου','mein Mann'],['η δασκάλα','die Lehrerin'],['μαθαίνω','ich lerne']],
+ qs:[['Woher kommt Eleni?','Aus Athen',['Aus Thessaloniki','Aus Deutschland']],['Wo wohnt sie jetzt?','In Thessaloniki',['In Athen','In Berlin']],['Was ist Eleni von Beruf?','Lehrerin',['Ärztin','Studentin']],['Welche Sprache lernt sie?','Deutsch',['Englisch','Französisch']]]},
+{id:'r2',title:'Η οικογένειά μου',after:'l08',icon:'👨‍👩‍👧',
+ text:['Η οικογένειά μου είναι μεγάλη.','Έχω δύο αδέρφια: έναν αδερφό και μια αδερφή.','Ο αδερφός μου είναι είκοσι πέντε χρονών και είναι φοιτητής.','Η αδερφή μου είναι γιατρός και μένει στην Πάτρα.','Οι γονείς μου μένουν σε ένα χωριό.','Ο πατέρας μου έχει ένα μικρό μαγαζί.','Η μητέρα μου μαγειρεύει πολύ καλά.','Την Κυριακή τρώμε όλοι μαζί.'],
+ de:['Meine Familie ist groß.','Ich habe zwei Geschwister: einen Bruder und eine Schwester.','Mein Bruder ist fünfundzwanzig Jahre alt und ist Student.','Meine Schwester ist Ärztin und wohnt in Patras.','Meine Eltern wohnen in einem Dorf.','Mein Vater hat einen kleinen Laden.','Meine Mutter kocht sehr gut.','Am Sonntag essen wir alle zusammen.'],
+ gloss:[['τα αδέρφια','die Geschwister'],['ο φοιτητής','der Student'],['το χωριό','das Dorf'],['το μαγαζί','der Laden'],['μαζί','zusammen']],
+ qs:[['Wie viele Geschwister hat die Person?','Zwei',['Eins','Drei']],['Was macht der Bruder?','Er ist Student',['Er ist Arzt','Er hat einen Laden']],['Wo wohnen die Eltern?','In einem Dorf',['In Patras','In Athen']],['Wann isst die Familie zusammen?','Am Sonntag',['Am Samstag','Jeden Tag']]]},
+{id:'r3',title:'Η μέρα μου',after:'l12',icon:'⏰',
+ text:['Ξυπνάω στις εφτά το πρωί.','Πίνω έναν καφέ και τρώω ψωμί με μέλι.','Στις οχτώ πηγαίνω στη δουλειά με το λεωφορείο.','Δουλεύω σε ένα γραφείο μέχρι τις τέσσερις.','Το μεσημέρι τρώω μια σαλάτα.','Το απόγευμα κάνω βόλτα στη θάλασσα.','Το βράδυ βλέπω τηλεόραση και διαβάζω.','Κοιμάμαι στις έντεκα.'],
+ de:['Ich wache um sieben Uhr morgens auf.','Ich trinke einen Kaffee und esse Brot mit Honig.','Um acht fahre ich mit dem Bus zur Arbeit.','Ich arbeite in einem Büro bis vier.','Mittags esse ich einen Salat.','Am Nachmittag mache ich einen Spaziergang am Meer.','Abends sehe ich fern und lese.','Ich schlafe um elf.'],
+ gloss:[['ξυπνάω','ich wache auf'],['το μέλι','der Honig'],['το γραφείο','das Büro'],['μέχρι','bis'],['η βόλτα','der Spaziergang']],
+ qs:[['Wann wacht die Person auf?','Um sieben',['Um acht','Um elf']],['Wie fährt sie zur Arbeit?','Mit dem Bus',['Mit dem Auto','Zu Fuß']],['Was isst sie mittags?','Einen Salat',['Brot mit Honig','Fisch']],['Was macht sie am Nachmittag?','Einen Spaziergang am Meer',['Fernsehen','Arbeiten']]]},
+{id:'r4',title:'Στο καφενείο',after:'l16',icon:'☕',
+ text:['Το Σάββατο πηγαίνω με τη φίλη μου τη Μαρία σε ένα καφενείο.','Το καφενείο είναι στην πλατεία, δίπλα στην εκκλησία.','Εγώ παίρνω έναν ελληνικό καφέ χωρίς ζάχαρη.','Η Μαρία παίρνει ένα τσάι με λεμόνι και ένα γλυκό.','Ο σερβιτόρος είναι πολύ ευγενικός.','Μιλάμε για τη δουλειά και τις διακοπές.','Ο καφές κοστίζει δύο ευρώ.','Πληρώνω εγώ, γιατί η Μαρία έχει γενέθλια.'],
+ de:['Am Samstag gehe ich mit meiner Freundin Maria in ein Kafenio.','Das Kafenio ist am Platz, neben der Kirche.','Ich nehme einen griechischen Kaffee ohne Zucker.','Maria nimmt einen Tee mit Zitrone und ein Süßes.','Der Kellner ist sehr freundlich.','Wir sprechen über die Arbeit und den Urlaub.','Der Kaffee kostet zwei Euro.','Ich bezahle, weil Maria Geburtstag hat.'],
+ gloss:[['το καφενείο','das Kaffeehaus'],['η πλατεία','der Platz'],['χωρίς','ohne'],['ευγενικός','freundlich, höflich'],['τα γενέθλια','der Geburtstag']],
+ qs:[['Wo ist das Kafenio?','Am Platz, neben der Kirche',['Am Meer','Neben der Schule']],['Was nimmt Maria?','Tee mit Zitrone und ein Süßes',['Griechischen Kaffee','Ein Glas Wein']],['Wie viel kostet der Kaffee?','Zwei Euro',['Drei Euro','Fünf Euro']],['Warum bezahlt die Person?','Weil Maria Geburtstag hat',['Weil Maria kein Geld hat','Weil der Kellner es will']]]},
+{id:'r5',title:'Στη λαϊκή αγορά',after:'l20',icon:'🥕',
+ text:['Κάθε Τετάρτη έχει λαϊκή αγορά στη γειτονιά μας.','Αγοράζω φρέσκα λαχανικά και φρούτα.','Σήμερα θέλω ντομάτες, αγγούρια και ένα κιλό πορτοκάλια.','Ο πωλητής λέει: «Οι ντομάτες είναι πολύ νόστιμες σήμερα!»','Ρωτάω: «Πόσο κάνουν τα πορτοκάλια;»','«Ένα ευρώ και πενήντα το κιλό», απαντάει.','Αγοράζω και λίγο τυρί και ελιές.','Όλα μαζί κοστίζουν δώδεκα ευρώ.'],
+ de:['Jeden Mittwoch ist Wochenmarkt in unserem Viertel.','Ich kaufe frisches Gemüse und Obst.','Heute möchte ich Tomaten, Gurken und ein Kilo Orangen.','Der Verkäufer sagt: „Die Tomaten sind heute sehr lecker!“','Ich frage: „Was kosten die Orangen?“','„Ein Euro fünfzig das Kilo“, antwortet er.','Ich kaufe auch etwas Käse und Oliven.','Alles zusammen kostet zwölf Euro.'],
+ gloss:[['η λαϊκή αγορά','der Wochenmarkt'],['η γειτονιά','das Viertel'],['φρέσκος','frisch'],['νόστιμος','lecker'],['απαντάω','ich antworte']],
+ qs:[['Wann ist Wochenmarkt?','Jeden Mittwoch',['Jeden Samstag','Jeden Tag']],['Was kostet ein Kilo Orangen?','Ein Euro fünfzig',['Zwei Euro','Zwölf Euro']],['Was sagt der Verkäufer über die Tomaten?','Sie sind sehr lecker',['Sie sind teuer','Sie sind alt']],['Wie viel kostet alles zusammen?','Zwölf Euro',['Zehn Euro','Fünfzehn Euro']]]},
+{id:'r6',title:'Το σπίτι μας',after:'l24',icon:'🏠',
+ text:['Μένουμε σε ένα διαμέρισμα στον τρίτο όροφο.','Το διαμέρισμα έχει τρία δωμάτια, κουζίνα και μπάνιο.','Το σαλόνι είναι μεγάλο και φωτεινό.','Στο σαλόνι έχουμε έναν καναπέ, ένα τραπέζι και μια τηλεόραση.','Η κρεβατοκάμαρα είναι μικρή, αλλά ήσυχη.','Από το μπαλκόνι βλέπουμε τη θάλασσα.','Δεν έχουμε κήπο, αλλά έχουμε πολλά λουλούδια στο μπαλκόνι.','Μου αρέσει πολύ το σπίτι μας.'],
+ de:['Wir wohnen in einer Wohnung im dritten Stock.','Die Wohnung hat drei Zimmer, Küche und Bad.','Das Wohnzimmer ist groß und hell.','Im Wohnzimmer haben wir ein Sofa, einen Tisch und einen Fernseher.','Das Schlafzimmer ist klein, aber ruhig.','Vom Balkon sehen wir das Meer.','Wir haben keinen Garten, aber wir haben viele Blumen auf dem Balkon.','Ich mag unsere Wohnung sehr.'],
+ gloss:[['ο όροφος','der Stock, die Etage'],['φωτεινός','hell'],['ήσυχος','ruhig'],['ο κήπος','der Garten'],['το λουλούδι','die Blume']],
+ qs:[['In welchem Stock ist die Wohnung?','Im dritten',['Im ersten','Im fünften']],['Wie ist das Wohnzimmer?','Groß und hell',['Klein und dunkel','Klein, aber ruhig']],['Was sieht man vom Balkon?','Das Meer',['Den Garten','Die Berge']],['Was hat die Familie nicht?','Einen Garten',['Einen Balkon','Blumen']]]},
+{id:'r7',title:'Διακοπές στην Κρήτη',after:'l28',icon:'🏖️',
+ text:['Το καλοκαίρι πηγαίνουμε διακοπές στην Κρήτη.','Ταξιδεύουμε με το πλοίο από τον Πειραιά.','Το ταξίδι κρατάει εννιά ώρες.','Μένουμε σε ένα μικρό ξενοδοχείο κοντά στη θάλασσα.','Το πρωί κολυμπάμε και το απόγευμα κάνουμε βόλτες στο χωριό.','Το βράδυ τρώμε σε μια ταβέρνα: ψάρι, σαλάτα και φρέσκο ψωμί.','Ο καιρός είναι πολύ ζεστός, αλλά στη θάλασσα έχει αέρα.','Η Κρήτη είναι πολύ όμορφη!'],
+ de:['Im Sommer fahren wir in den Urlaub nach Kreta.','Wir reisen mit dem Schiff von Piräus.','Die Reise dauert neun Stunden.','Wir wohnen in einem kleinen Hotel nahe am Meer.','Morgens schwimmen wir und nachmittags machen wir Spaziergänge im Dorf.','Abends essen wir in einer Taverne: Fisch, Salat und frisches Brot.','Das Wetter ist sehr heiß, aber am Meer gibt es Wind.','Kreta ist sehr schön!'],
+ gloss:[['οι διακοπές','der Urlaub'],['το πλοίο','das Schiff'],['κρατάει','es dauert'],['κολυμπάω','ich schwimme'],['ο αέρας','der Wind, die Luft']],
+ qs:[['Wie reist die Familie nach Kreta?','Mit dem Schiff',['Mit dem Flugzeug','Mit dem Auto']],['Wie lange dauert die Reise?','Neun Stunden',['Neunzehn Stunden','Zwei Stunden']],['Was machen sie morgens?','Schwimmen',['Spaziergänge im Dorf','In der Taverne essen']],['Wie ist das Wetter?','Sehr heiß',['Kalt','Regnerisch']]]},
+{id:'r8',title:'Ένα γράμμα από τη Γερμανία',after:'l32',icon:'✉️',
+ text:['Αγαπητή Ελένη,','πώς είσαι; Εγώ είμαι καλά.','Τώρα μένω στο Βερολίνο και δουλεύω σε ένα νοσοκομείο.','Η δουλειά είναι δύσκολη, αλλά μου αρέσει.','Εδώ κάνει κρύο και βρέχει συχνά.','Τα Σαββατοκύριακα πηγαίνω σε ένα ελληνικό εστιατόριο με φίλους.','Τον Αύγουστο θα έρθω στην Ελλάδα για δύο εβδομάδες.','Θέλω πολύ να σε δω!','Φιλιά, Κατερίνα'],
+ de:['Liebe Eleni,','wie geht es dir? Mir geht es gut.','Jetzt wohne ich in Berlin und arbeite in einem Krankenhaus.','Die Arbeit ist schwer, aber sie gefällt mir.','Hier ist es kalt und es regnet oft.','An den Wochenenden gehe ich mit Freunden in ein griechisches Restaurant.','Im August werde ich für zwei Wochen nach Griechenland kommen.','Ich möchte dich sehr gern sehen!','Küsse, Katerina'],
+ gloss:[['αγαπητή','liebe (Anrede)'],['το νοσοκομείο','das Krankenhaus'],['δύσκολος','schwer, schwierig'],['βρέχει','es regnet'],['θα έρθω','ich werde kommen']],
+ qs:[['Wo wohnt Katerina jetzt?','In Berlin',['In Athen','In München']],['Wo arbeitet sie?','In einem Krankenhaus',['In einem Restaurant','In einer Schule']],['Wie ist das Wetter in Berlin?','Kalt und oft Regen',['Heiß und sonnig','Windig']],['Wann kommt Katerina nach Griechenland?','Im August',['Im Juli','Im Dezember']]]}
+];
+
 return {id:'el',name:'Griechisch',native:'Ελληνικά',flag:'🇬🇷',tts:'el-GR',voiceRe:/^el/i,lang2:'el',voiceAdj:'griechische',key:'griechisch_lernen_v1',exportName:'griechisch-fortschritt.json',hasTr:true,keep:'',sample:'Καλημέρα! Τι κάνεις;',kbdLabel:'Griechische Bildschirmtastatur',
  KEYS:KEYS,ART:/^(ο|η|το|οι|τα|τον|την|τους|τις|του|της|των)\s+/i,artless:s=>s.replace(/^(ο|η|το|οι|τα|τον|την|τους|τις)\s+/i,''),
- UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),
+ UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),READ:(typeof READ!=='undefined'?READ:[]),
  sprint:{title:'Artikel-Sprint',desc:'ο, η oder το? Du hast 3 Herzen.',qs:()=>smp(NOUNS,15).map(n=>({t:'mc',lab:'Welcher Artikel?',q:'___ '+n[0],sub:n[2],opts:['ο','η','το'],a:n[1],expl:n[1]+' '+n[0]+' = '+n[2]}))}};
 };
 
@@ -2589,9 +2645,56 @@ REF=[
 ];
 })();
 
+
+/* ============================================================
+   NORWEGISCH (Bokmål) – Leseverstehen (8 Kurztexte, A1)
+   ============================================================ */
+var READ=[
+{id:'r1',title:'Hei, jeg heter Ingrid',after:'l04',icon:'👋',
+ text:['Hei! Jeg heter Ingrid.','Jeg kommer fra Bergen.','Jeg er tretti år gammel.','Jeg bor i Oslo sammen med mannen min.','Mannen min heter Thomas.','Jeg er lærer og snakker norsk og engelsk.','Jeg lærer tysk.'],
+ de:['Hallo! Ich heiße Ingrid.','Ich komme aus Bergen.','Ich bin dreißig Jahre alt.','Ich wohne in Oslo zusammen mit meinem Mann.','Mein Mann heißt Thomas.','Ich bin Lehrerin und spreche Norwegisch und Englisch.','Ich lerne Deutsch.'],
+ gloss:[['år gammel','Jahre alt'],['sammen med','zusammen mit'],['mannen min','mein Mann'],['en lærer','ein Lehrer / eine Lehrerin']],
+ qs:[['Woher kommt Ingrid?','Aus Bergen',['Aus Oslo','Aus Deutschland']],['Wo wohnt sie jetzt?','In Oslo',['In Bergen','In Berlin']],['Was ist Ingrid von Beruf?','Lehrerin',['Ärztin','Studentin']],['Welche Sprache lernt sie?','Deutsch',['Englisch','Französisch']]]},
+{id:'r2',title:'Familien min',after:'l08',icon:'👨‍👩‍👧',
+ text:['Familien min er stor.','Jeg har to søsken: en bror og en søster.','Broren min er tjuefem år og er student.','Søsteren min er lege og bor i Trondheim.','Foreldrene mine bor i en liten landsby.','Faren min har en liten butikk.','Moren min lager veldig god mat.','På søndag spiser vi alle sammen.'],
+ de:['Meine Familie ist groß.','Ich habe zwei Geschwister: einen Bruder und eine Schwester.','Mein Bruder ist fünfundzwanzig und ist Student.','Meine Schwester ist Ärztin und wohnt in Trondheim.','Meine Eltern wohnen in einem kleinen Dorf.','Mein Vater hat einen kleinen Laden.','Meine Mutter kocht sehr gutes Essen.','Am Sonntag essen wir alle zusammen.'],
+ gloss:[['søsken','Geschwister'],['en student','ein Student'],['en landsby','ein Dorf'],['en butikk','ein Laden'],['lager mat','kocht (macht Essen)']],
+ qs:[['Wie viele Geschwister hat die Person?','Zwei',['Eins','Drei']],['Was macht der Bruder?','Er ist Student',['Er ist Arzt','Er hat einen Laden']],['Wo wohnen die Eltern?','In einem kleinen Dorf',['In Trondheim','In Oslo']],['Wann isst die Familie zusammen?','Am Sonntag',['Am Samstag','Jeden Tag']]]},
+{id:'r3',title:'Dagen min',after:'l12',icon:'⏰',
+ text:['Jeg våkner klokka sju om morgenen.','Jeg drikker en kopp kaffe og spiser brød med ost.','Klokka åtte tar jeg bussen til jobben.','Jeg jobber på et kontor til klokka fire.','Til lunsj spiser jeg en salat.','Om ettermiddagen går jeg en tur ved sjøen.','Om kvelden ser jeg på TV og leser.','Jeg legger meg klokka elleve.'],
+ de:['Ich wache um sieben Uhr morgens auf.','Ich trinke eine Tasse Kaffee und esse Brot mit Käse.','Um acht nehme ich den Bus zur Arbeit.','Ich arbeite in einem Büro bis vier Uhr.','Zum Mittagessen esse ich einen Salat.','Am Nachmittag mache ich einen Spaziergang am Meer.','Am Abend sehe ich fern und lese.','Ich gehe um elf ins Bett.'],
+ gloss:[['våkner','wache auf'],['et kontor','ein Büro'],['til lunsj','zum Mittagessen'],['går en tur','mache einen Spaziergang'],['legger meg','lege mich hin, gehe ins Bett']],
+ qs:[['Wann wacht die Person auf?','Um sieben',['Um acht','Um elf']],['Wie fährt sie zur Arbeit?','Mit dem Bus',['Mit dem Auto','Zu Fuß']],['Was isst sie zum Mittagessen?','Einen Salat',['Brot mit Käse','Fisch']],['Was macht sie am Nachmittag?','Einen Spaziergang am Meer',['Fernsehen','Arbeiten']]]},
+{id:'r4',title:'På kafé',after:'l16',icon:'☕',
+ text:['På lørdag går jeg på kafé med venninnen min Nora.','Kafeen ligger på torget, ved siden av kirken.','Jeg bestiller en kaffe uten sukker.','Nora bestiller te med sitron og en bolle.','Servitøren er veldig hyggelig.','Vi snakker om jobben og ferien.','Kaffen koster førti kroner.','Jeg betaler, fordi Nora har bursdag.'],
+ de:['Am Samstag gehe ich mit meiner Freundin Nora ins Café.','Das Café liegt am Marktplatz, neben der Kirche.','Ich bestelle einen Kaffee ohne Zucker.','Nora bestellt Tee mit Zitrone und ein Hefebrötchen.','Der Kellner ist sehr nett.','Wir sprechen über die Arbeit und den Urlaub.','Der Kaffee kostet vierzig Kronen.','Ich bezahle, weil Nora Geburtstag hat.'],
+ gloss:[['ei venninne','eine Freundin'],['torget','der Marktplatz'],['ved siden av','neben'],['en bolle','ein süßes Hefebrötchen'],['hyggelig','nett, gemütlich']],
+ qs:[['Wo liegt das Café?','Am Marktplatz, neben der Kirche',['Am Meer','Neben der Schule']],['Was bestellt Nora?','Tee mit Zitrone und eine Bolle',['Kaffee ohne Zucker','Ein Glas Wein']],['Wie viel kostet der Kaffee?','Vierzig Kronen',['Vierzehn Kronen','Fünfzig Kronen']],['Warum bezahlt die Person?','Weil Nora Geburtstag hat',['Weil Nora kein Geld hat','Weil der Kellner es will']]]},
+{id:'r5',title:'I matbutikken',after:'l20',icon:'🥕',
+ text:['Hver fredag handler jeg mat i butikken.','Jeg kjøper grønnsaker, frukt og brød.','I dag trenger jeg tomater, agurk og en kilo epler.','Eplene koster tretti kroner per kilo.','Jeg spør en ansatt: «Hvor finner jeg melk?»','«Melken står bakerst i butikken», svarer han.','Jeg kjøper også litt ost og fisk til middag.','Alt sammen koster to hundre kroner.'],
+ de:['Jeden Freitag kaufe ich Lebensmittel im Laden.','Ich kaufe Gemüse, Obst und Brot.','Heute brauche ich Tomaten, Gurke und ein Kilo Äpfel.','Die Äpfel kosten dreißig Kronen pro Kilo.','Ich frage einen Angestellten: „Wo finde ich Milch?“','„Die Milch steht ganz hinten im Laden“, antwortet er.','Ich kaufe auch etwas Käse und Fisch zum Abendessen.','Alles zusammen kostet zweihundert Kronen.'],
+ gloss:[['handler','kaufe ein'],['trenger','brauche'],['en ansatt','ein Angestellter'],['bakerst','ganz hinten'],['til middag','zum Abendessen']],
+ qs:[['Wann kauft die Person ein?','Jeden Freitag',['Jeden Samstag','Jeden Tag']],['Was kostet ein Kilo Äpfel?','Dreißig Kronen',['Dreizehn Kronen','Zweihundert Kronen']],['Wo steht die Milch?','Ganz hinten im Laden',['Vorne an der Kasse','Neben dem Brot']],['Was kauft sie zum Abendessen?','Käse und Fisch',['Äpfel und Tomaten','Brot und Milch']]]},
+{id:'r6',title:'Huset vårt',after:'l24',icon:'🏠',
+ text:['Vi bor i en leilighet i tredje etasje.','Leiligheten har tre rom, kjøkken og bad.','Stua er stor og lys.','I stua har vi en sofa, et bord og en TV.','Soverommet er lite, men rolig.','Fra balkongen ser vi fjorden.','Vi har ingen hage, men vi har mange blomster på balkongen.','Jeg liker leiligheten vår veldig godt.'],
+ de:['Wir wohnen in einer Wohnung im dritten Stock.','Die Wohnung hat drei Zimmer, Küche und Bad.','Das Wohnzimmer ist groß und hell.','Im Wohnzimmer haben wir ein Sofa, einen Tisch und einen Fernseher.','Das Schlafzimmer ist klein, aber ruhig.','Vom Balkon sehen wir den Fjord.','Wir haben keinen Garten, aber wir haben viele Blumen auf dem Balkon.','Ich mag unsere Wohnung sehr.'],
+ gloss:[['en etasje','ein Stockwerk'],['stua','das Wohnzimmer'],['lys','hell'],['rolig','ruhig'],['en hage','ein Garten']],
+ qs:[['In welchem Stock ist die Wohnung?','Im dritten',['Im ersten','Im fünften']],['Wie ist das Wohnzimmer?','Groß und hell',['Klein und dunkel','Klein, aber ruhig']],['Was sieht man vom Balkon?','Den Fjord',['Den Garten','Die Stadt']],['Was hat die Familie nicht?','Einen Garten',['Einen Balkon','Blumen']]]},
+{id:'r7',title:'Ferie i Lofoten',after:'l28',icon:'🏔️',
+ text:['Om sommeren reiser vi på ferie til Lofoten.','Vi kjører bil fra Oslo, og turen tar to dager.','Vi bor i en liten hytte ved havet.','Om morgenen går vi tur i fjellet.','Om ettermiddagen fisker vi, og om kvelden lager vi fisk til middag.','Været er fint, men det er litt kaldt om kvelden.','Sola går nesten ikke ned.','Lofoten er veldig vakkert!'],
+ de:['Im Sommer fahren wir in den Urlaub auf die Lofoten.','Wir fahren mit dem Auto von Oslo, und die Fahrt dauert zwei Tage.','Wir wohnen in einer kleinen Hütte am Meer.','Am Morgen wandern wir in den Bergen.','Am Nachmittag angeln wir, und am Abend kochen wir Fisch zum Abendessen.','Das Wetter ist schön, aber abends ist es etwas kalt.','Die Sonne geht fast nicht unter.','Die Lofoten sind sehr schön!'],
+ gloss:[['en ferie','ein Urlaub'],['turen tar','die Fahrt dauert'],['ei hytte','eine Hütte'],['fisker','angeln'],['går ned','geht unter']],
+ qs:[['Wie reist die Familie zu den Lofoten?','Mit dem Auto',['Mit dem Schiff','Mit dem Flugzeug']],['Wie lange dauert die Fahrt?','Zwei Tage',['Zwei Stunden','Eine Woche']],['Was machen sie am Nachmittag?','Angeln',['Wandern','Schlafen']],['Wie ist das Wetter abends?','Etwas kalt',['Sehr heiß','Regnerisch']]]},
+{id:'r8',title:'Et brev fra Tyskland',after:'l32',icon:'✉️',
+ text:['Kjære Ingrid,','hvordan går det? Jeg har det bra.','Nå bor jeg i Berlin og jobber på et sykehus.','Jobben er vanskelig, men jeg liker den.','Her er det kaldt, og det regner ofte.','I helgene går jeg på en norsk restaurant med venner.','I august kommer jeg til Norge i to uker.','Jeg gleder meg til å se deg!','Klem fra Kari'],
+ de:['Liebe Ingrid,','wie geht es? Mir geht es gut.','Jetzt wohne ich in Berlin und arbeite in einem Krankenhaus.','Die Arbeit ist schwierig, aber ich mag sie.','Hier ist es kalt, und es regnet oft.','An den Wochenenden gehe ich mit Freunden in ein norwegisches Restaurant.','Im August komme ich für zwei Wochen nach Norwegen.','Ich freue mich darauf, dich zu sehen!','Umarmung von Kari'],
+ gloss:[['kjære','liebe/lieber (Anrede)'],['et sykehus','ein Krankenhaus'],['vanskelig','schwierig'],['i helgene','an den Wochenenden'],['gleder meg til','freue mich auf']],
+ qs:[['Wo wohnt Kari jetzt?','In Berlin',['In Oslo','In München']],['Wo arbeitet sie?','In einem Krankenhaus',['In einem Restaurant','In einer Schule']],['Wie ist das Wetter in Berlin?','Kalt und oft Regen',['Heiß und sonnig','Windig']],['Wann kommt Kari nach Norwegen?','Im August',['Im Juli','Im Dezember']]]}
+];
+
 return {id:'no',name:'Norwegisch',native:'Norsk',flag:'🇳🇴',tts:'nb-NO',voiceRe:/^(nb|no|nn)/i,lang2:'nb',voiceAdj:'norwegische',key:'sprachen_lernen_no_v1',exportName:'norwegisch-fortschritt.json',hasTr:false,keep:'å',sample:'Hei! Hvordan går det?',kbdLabel:'Tasten für æ, ø, å',
  KEYS:KEYS,ART:/^(en|ei|et)\s+/i,artless:s=>s.replace(/^(en|ei|et)\s+/i,''),
- UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),
+ UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),READ:(typeof READ!=='undefined'?READ:[]),
  sprint:{title:'Endungs-Sprint',desc:'Wie heißt die bestimmte Form (bilen, huset, jenta)? Du hast 3 Herzen.',qs:()=>smp(NOUNS,15).map(n=>{const stem=n[0].split(' ')[1];const base=stem.endsWith('e')?stem.slice(0,-1):stem;const opts=[base+'en',base+'et',base+'a'];return{t:'mc',lab:'Bestimmte Form?',q:n[0]+' → ___',sub:n[2],opts:opts,a:n[1],expl:n[0]+' → '+n[1]+' ('+n[2]+')'}})}};
 };
 
@@ -3314,9 +3417,56 @@ GRAM.splice(0,GRAM.length,...__GFR.NEU);
 var REF=__GFR.REF;
 PACK._poolsFr=__GFR.D;
 
+
+/* ============================================================
+   FRANZÖSISCH – Leseverstehen (8 Kurztexte, A1)
+   ============================================================ */
+var READ=[
+{id:'r1',title:'Bonjour, je m’appelle Claire',after:'l04',icon:'👋',
+ text:['Bonjour ! Je m’appelle Claire.','Je viens de Lyon.','J’ai trente ans.','J’habite à Paris avec mon mari.','Mon mari s’appelle Paul.','Je suis professeure et je parle français et anglais.','J’apprends l’allemand.'],
+ de:['Hallo! Ich heiße Claire.','Ich komme aus Lyon.','Ich bin dreißig Jahre alt.','Ich wohne in Paris mit meinem Mann.','Mein Mann heißt Paul.','Ich bin Lehrerin und spreche Französisch und Englisch.','Ich lerne Deutsch.'],
+ gloss:[['je viens de','ich komme aus'],['j’ai trente ans','ich bin dreißig Jahre alt'],['mon mari','mein Mann'],['j’apprends','ich lerne']],
+ qs:[['Woher kommt Claire?','Aus Lyon',['Aus Paris','Aus Deutschland']],['Wo wohnt sie jetzt?','In Paris',['In Lyon','In Berlin']],['Was ist Claire von Beruf?','Lehrerin',['Ärztin','Studentin']],['Welche Sprache lernt sie?','Deutsch',['Englisch','Spanisch']]]},
+{id:'r2',title:'Ma famille',after:'l08',icon:'👨‍👩‍👧',
+ text:['Ma famille est grande.','J’ai un frère et une sœur.','Mon frère a vingt-cinq ans et il est étudiant.','Ma sœur est médecin et elle habite à Marseille.','Mes parents habitent dans un petit village.','Mon père a un petit magasin.','Ma mère cuisine très bien.','Le dimanche, nous mangeons tous ensemble.'],
+ de:['Meine Familie ist groß.','Ich habe einen Bruder und eine Schwester.','Mein Bruder ist fünfundzwanzig und ist Student.','Meine Schwester ist Ärztin und wohnt in Marseille.','Meine Eltern wohnen in einem kleinen Dorf.','Mein Vater hat einen kleinen Laden.','Meine Mutter kocht sehr gut.','Am Sonntag essen wir alle zusammen.'],
+ gloss:[['un étudiant','ein Student'],['un village','ein Dorf'],['un magasin','ein Laden'],['cuisiner','kochen'],['ensemble','zusammen']],
+ qs:[['Wie viele Geschwister hat die Person?','Zwei',['Eins','Drei']],['Was macht der Bruder?','Er ist Student',['Er ist Arzt','Er hat einen Laden']],['Wo wohnen die Eltern?','In einem kleinen Dorf',['In Marseille','In Paris']],['Wann isst die Familie zusammen?','Am Sonntag',['Am Samstag','Jeden Tag']]]},
+{id:'r3',title:'Ma journée',after:'l12',icon:'⏰',
+ text:['Je me réveille à sept heures du matin.','Je bois un café et je mange du pain avec du beurre.','À huit heures, je vais au travail en bus.','Je travaille dans un bureau jusqu’à seize heures.','À midi, je mange une salade.','L’après-midi, je me promène au bord de la mer.','Le soir, je regarde la télé et je lis.','Je me couche à vingt-trois heures.'],
+ de:['Ich wache um sieben Uhr morgens auf.','Ich trinke einen Kaffee und esse Brot mit Butter.','Um acht Uhr fahre ich mit dem Bus zur Arbeit.','Ich arbeite in einem Büro bis sechzehn Uhr.','Mittags esse ich einen Salat.','Am Nachmittag spaziere ich am Meer.','Abends sehe ich fern und lese.','Ich gehe um dreiundzwanzig Uhr ins Bett.'],
+ gloss:[['je me réveille','ich wache auf'],['le beurre','die Butter'],['un bureau','ein Büro'],['jusqu’à','bis'],['je me couche','ich gehe ins Bett']],
+ qs:[['Wann wacht die Person auf?','Um sieben',['Um acht','Um elf']],['Wie fährt sie zur Arbeit?','Mit dem Bus',['Mit dem Auto','Zu Fuß']],['Was isst sie mittags?','Einen Salat',['Brot mit Butter','Fisch']],['Was macht sie am Nachmittag?','Einen Spaziergang am Meer',['Fernsehen','Arbeiten']]]},
+{id:'r4',title:'Au café',after:'l16',icon:'☕',
+ text:['Le samedi, je vais au café avec mon amie Marie.','Le café est sur la place, à côté de l’église.','Je prends un café sans sucre.','Marie prend un thé au citron et un croissant.','Le serveur est très gentil.','Nous parlons du travail et des vacances.','Le café coûte deux euros.','C’est moi qui paie, parce que c’est l’anniversaire de Marie.'],
+ de:['Am Samstag gehe ich mit meiner Freundin Marie ins Café.','Das Café ist am Platz, neben der Kirche.','Ich nehme einen Kaffee ohne Zucker.','Marie nimmt einen Tee mit Zitrone und ein Croissant.','Der Kellner ist sehr nett.','Wir sprechen über die Arbeit und den Urlaub.','Der Kaffee kostet zwei Euro.','Ich bezahle, weil Marie Geburtstag hat.'],
+ gloss:[['la place','der Platz'],['à côté de','neben'],['sans','ohne'],['gentil','nett'],['l’anniversaire','der Geburtstag']],
+ qs:[['Wo ist das Café?','Am Platz, neben der Kirche',['Am Meer','Neben der Schule']],['Was nimmt Marie?','Tee mit Zitrone und ein Croissant',['Kaffee ohne Zucker','Ein Glas Wein']],['Wie viel kostet der Kaffee?','Zwei Euro',['Drei Euro','Fünf Euro']],['Warum bezahlt die Person?','Weil Marie Geburtstag hat',['Weil Marie kein Geld hat','Weil der Kellner es will']]]},
+{id:'r5',title:'Au marché',after:'l20',icon:'🥕',
+ text:['Tous les mercredis, il y a un marché dans notre quartier.','J’achète des légumes frais et des fruits.','Aujourd’hui, je veux des tomates, des concombres et un kilo d’oranges.','Le vendeur dit : « Les tomates sont très bonnes aujourd’hui ! »','Je demande : « Combien coûtent les oranges ? »','« Un euro cinquante le kilo », répond-il.','J’achète aussi un peu de fromage et des olives.','En tout, ça coûte douze euros.'],
+ de:['Jeden Mittwoch gibt es einen Markt in unserem Viertel.','Ich kaufe frisches Gemüse und Obst.','Heute möchte ich Tomaten, Gurken und ein Kilo Orangen.','Der Verkäufer sagt: „Die Tomaten sind heute sehr gut!“','Ich frage: „Was kosten die Orangen?“','„Ein Euro fünfzig das Kilo“, antwortet er.','Ich kaufe auch etwas Käse und Oliven.','Insgesamt kostet es zwölf Euro.'],
+ gloss:[['le quartier','das Viertel'],['frais','frisch'],['le concombre','die Gurke'],['répondre','antworten'],['en tout','insgesamt']],
+ qs:[['Wann ist Markt?','Jeden Mittwoch',['Jeden Samstag','Jeden Tag']],['Was kostet ein Kilo Orangen?','Ein Euro fünfzig',['Zwei Euro','Zwölf Euro']],['Was sagt der Verkäufer über die Tomaten?','Sie sind sehr gut',['Sie sind teuer','Sie sind alt']],['Wie viel kostet alles zusammen?','Zwölf Euro',['Zehn Euro','Fünfzehn Euro']]]},
+{id:'r6',title:'Notre appartement',after:'l24',icon:'🏠',
+ text:['Nous habitons dans un appartement au troisième étage.','L’appartement a trois pièces, une cuisine et une salle de bains.','Le salon est grand et clair.','Dans le salon, il y a un canapé, une table et une télé.','La chambre est petite, mais calme.','Du balcon, nous voyons la mer.','Nous n’avons pas de jardin, mais nous avons beaucoup de fleurs sur le balcon.','J’aime beaucoup notre appartement.'],
+ de:['Wir wohnen in einer Wohnung im dritten Stock.','Die Wohnung hat drei Zimmer, eine Küche und ein Bad.','Das Wohnzimmer ist groß und hell.','Im Wohnzimmer gibt es ein Sofa, einen Tisch und einen Fernseher.','Das Schlafzimmer ist klein, aber ruhig.','Vom Balkon sehen wir das Meer.','Wir haben keinen Garten, aber wir haben viele Blumen auf dem Balkon.','Ich mag unsere Wohnung sehr.'],
+ gloss:[['l’étage','das Stockwerk'],['la pièce','das Zimmer'],['clair','hell'],['calme','ruhig'],['le jardin','der Garten']],
+ qs:[['In welchem Stock ist die Wohnung?','Im dritten',['Im ersten','Im fünften']],['Wie ist das Wohnzimmer?','Groß und hell',['Klein und dunkel','Klein, aber ruhig']],['Was sieht man vom Balkon?','Das Meer',['Den Garten','Die Berge']],['Was hat die Familie nicht?','Einen Garten',['Einen Balkon','Blumen']]]},
+{id:'r7',title:'Vacances en Bretagne',after:'l28',icon:'🏖️',
+ text:['En été, nous partons en vacances en Bretagne.','Nous voyageons en train depuis Paris.','Le voyage dure trois heures.','Nous dormons dans un petit hôtel près de la mer.','Le matin, nous nageons et l’après-midi, nous visitons des villages.','Le soir, nous mangeons des crêpes dans un restaurant.','Il fait beau, mais il y a du vent au bord de la mer.','La Bretagne est très belle !'],
+ de:['Im Sommer fahren wir in den Urlaub in die Bretagne.','Wir reisen mit dem Zug von Paris.','Die Reise dauert drei Stunden.','Wir schlafen in einem kleinen Hotel nahe am Meer.','Morgens schwimmen wir und nachmittags besichtigen wir Dörfer.','Abends essen wir Crêpes in einem Restaurant.','Das Wetter ist schön, aber am Meer gibt es Wind.','Die Bretagne ist sehr schön!'],
+ gloss:[['partir en vacances','in den Urlaub fahren'],['le voyage dure','die Reise dauert'],['près de','nahe bei'],['nager','schwimmen'],['le vent','der Wind']],
+ qs:[['Wie reist die Familie in die Bretagne?','Mit dem Zug',['Mit dem Flugzeug','Mit dem Auto']],['Wie lange dauert die Reise?','Drei Stunden',['Dreizehn Stunden','Eine Stunde']],['Was machen sie morgens?','Schwimmen',['Dörfer besichtigen','Crêpes essen']],['Wie ist das Wetter?','Schön, aber windig am Meer',['Kalt','Regnerisch']]]},
+{id:'r8',title:'Une lettre d’Allemagne',after:'l32',icon:'✉️',
+ text:['Chère Claire,','comment vas-tu ? Moi, je vais bien.','Maintenant, j’habite à Berlin et je travaille dans un hôpital.','Le travail est difficile, mais j’aime ça.','Ici, il fait froid et il pleut souvent.','Le week-end, je vais dans un restaurant français avec des amis.','En août, je viens en France pour deux semaines.','J’ai très envie de te voir !','Bisous, Sophie'],
+ de:['Liebe Claire,','wie geht es dir? Mir geht es gut.','Jetzt wohne ich in Berlin und arbeite in einem Krankenhaus.','Die Arbeit ist schwer, aber ich mag das.','Hier ist es kalt und es regnet oft.','Am Wochenende gehe ich mit Freunden in ein französisches Restaurant.','Im August komme ich für zwei Wochen nach Frankreich.','Ich möchte dich sehr gern sehen!','Küsse, Sophie'],
+ gloss:[['chère','liebe (Anrede)'],['un hôpital','ein Krankenhaus'],['difficile','schwierig'],['il pleut','es regnet'],['avoir envie de','Lust haben auf']],
+ qs:[['Wo wohnt Sophie jetzt?','In Berlin',['In Paris','In München']],['Wo arbeitet sie?','In einem Krankenhaus',['In einem Restaurant','In einer Schule']],['Wie ist das Wetter in Berlin?','Kalt und oft Regen',['Heiß und sonnig','Windig']],['Wann kommt Sophie nach Frankreich?','Im August',['Im Juli','Im Dezember']]]}
+];
+
 return {id:'fr',conjSplit:f=>{const m=f.match(/^(je |j’|tu |il |elle |on |nous |vous |ils |elles )(.+)$/);return m?{pre:m[1],verb:m[2]}:{pre:'',verb:f}},name:'Französisch',native:'Français',flag:'🇫🇷',tts:'fr-FR',voiceRe:/^fr/i,lang2:'fr',voiceAdj:'französische',key:'sprachen_lernen_fr_v1',exportName:'franzoesisch-fortschritt.json',hasTr:false,keep:'',sample:'Bonjour ! Comment ça va ?',kbdLabel:'Tasten für é, è, ç …',
  KEYS:KEYS,ART:/^(le|la|les|un|une|des|l['’])\s*/i,artless:s=>s.replace(/^(le|la|les|un|une|des)\s+/i,'').replace(/^l['’]/i,''),
- UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),
+ UNITS,PR,PRDE,PARA,NOUNS,SENT,GRAM,BLOCKS,LESSONS,REF:(typeof REF!=='undefined'?REF:[]),READ:(typeof READ!=='undefined'?READ:[]),
  sprint:{title:'Artikel-Sprint',desc:'le, la oder l’? Du hast 3 Herzen.',qs:()=>smp(NOUNS,15).map(n=>({t:'mc',lab:'Welcher Artikel?',q:'___ '+n[0],sub:n[2],opts:['le','la','l’'],a:n[1],expl:(n[1]==='l’'?'l’':n[1]+' ')+n[0]+' = '+n[2]}))}};
 };
 
@@ -3430,6 +3580,7 @@ function startSession(unitId){
   const now=Date.now();
   const pool=ALL.filter(i=>!unitId||i.unit===unitId);
   let due=shuffle(pool.filter(i=>S.items[i.id]&&S.items[i.id].due<=now)).slice(0,S.settings.sessionLen);
+  if(!unitId&&due.length<S.settings.sessionLen){const extra=shuffle(hardItems().filter(i=>!due.includes(i))).slice(0,Math.min(4,S.settings.sessionLen-due.length));due=due.concat(extra)}
   let fresh=unitId?pool.filter(i=>!S.items[i.id]).slice(0,S.settings.newPer):[];
   /* Neue Wörter kommen über den Lernpfad; die tägliche Runde wiederholt Gelerntes */
   if(!unitId&&!due.length)fresh=fresh.slice(0,S.settings.newPer);
@@ -3462,7 +3613,7 @@ function score(ok){
   const it=cur.it;
   const st=S.items[it.id]||(S.items[it.id]={box:0,due:0,seen:0,ok:0,bad:0});
   touchDay();
-  const h=S.hist[today()]||(S.hist[today()]={n:0,ok:0});h.n++;if(ok)h.ok++;
+  const h=S.hist[today()]||(S.hist[today()]={n:0,ok:0});h.n++;if(ok)h.ok++;tick(h);
   if(cur.first){
     st.seen++;
     if(ok){st.ok++;st.box=Math.min(6,st.box+1);st.due=Date.now()+INTERVALS[st.box]*DAY;addXP(10)}
@@ -3487,6 +3638,9 @@ function render(){
   else if(view==='games')app.innerHTML=gamesHTML();
   else if(view==='path')app.innerHTML=pathHTML();
   else if(view==='choose')app.innerHTML=chooseHTML();
+  else if(view==='role')app.innerHTML=roleHTML(viewArg);
+  else if(view==='read')app.innerHTML=readHTML();
+  else if(view==='readtext')app.innerHTML=readTextHTML(viewArg);
   else if(view==='ref')app.innerHTML=refHTML();
   else if(view==='vocab'){app.innerHTML=vocabHTML();vocabList()}
   else if(view==='cards')app.innerHTML=cardsHTML();
@@ -3495,13 +3649,13 @@ function render(){
   if(NAVV.includes(view)){app.insertAdjacentHTML('beforeend',navHTML());window.scrollTo(0,0)}
 }
 function chooseHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.02</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.10</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
 <h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 4px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>${lastLine()}
 <div class="units">${LANGS.map(l=>`<div class="card unit" ${l.id===LANGID?'style="border:2px solid var(--blue2)"':''}><span class="ico">${l.flag}</span><h3>${esc(l.name)}</h3><p>${esc(l.native)} · ${esc(l.desc)}</p><div class="row"><button class="primary" onclick="setLang('${l.id}')">${l.id===LANGID?'Weiter':'Lernen'}</button></div></div>`).join('')}</div>`;
 }
 function setLang(id){try{localStorage.setItem('sprachen_lernen_lang_'+USER,id)}catch(e){}if(CLOUD.on&&CLOUD.user&&!DEMO){CLOUD.db.doc('users/'+USER).set({lang:id,name:USER},{merge:true}).catch(()=>{})}if(CLOUD.t){clearTimeout(CLOUD.t);cloudPush()}if(id===LANGID){go('home');return}location.reload()}
 function loginHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.02</small></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.10</small></div></div>
 <div class="card" style="max-width:420px;margin:20px auto"><h2 style="margin-top:0">Anmelden</h2><p class="meta">Wer lernt heute? Jeder hat seinen eigenen Fortschritt.${CLOUD.on?' <br>☁️ Dein Fortschritt wird online gesichert und ist auf allen Geräten verfügbar.':''}</p>
 <div class="opts" style="grid-template-columns:1fr 1fr">${USERS.map(u=>`<button class="opt" id="u_${u}" onclick="pickUser('${u}')">${esc(u)}</button>`).join('')}</div>
 <div style="margin-top:14px"><input id="pw" class="txt" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -3626,7 +3780,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-24.2';
+const APP_VERSION='2026-10-25.1';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -3740,8 +3894,170 @@ function checkUpdate(){
   fetch(location.pathname,{cache:'no-store'}).then(r=>r.text()).then(t=>{const m=t.match(/const APP_VERSION='([^']+)'/);if(m&&m[1]!==APP_VERSION&&!document.getElementById('updbar')){const d=document.createElement('div');d.id='updbar';d.className='toast';d.style.cssText='bottom:90px;cursor:pointer';d.innerHTML='🔄 Neue Version verfügbar – hier tippen zum Aktualisieren';d.onclick=()=>location.reload();document.body.appendChild(d)}}).catch(()=>{});
 }
 if(typeof location!=='undefined'&&/^https?:/.test(location.protocol)){setInterval(checkUpdate,30*60*1000);setTimeout(checkUpdate,15000)}
-function go(v,arg){if(v!=='vocab')VPLAY=null;stopSpeech();clearTimers();view=v;viewArg=arg;render()}
-function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.02</small></div>
+/* ---------- Schwierige Wörter ---------- */
+function hardItems(){return vocabItems().filter(i=>vHard(S.items[i.id]))}
+function startHard(){
+  const a=hardItems();if(!a.length){toast('Keine schwierigen Wörter – weiter so!');return}
+  const pick=shuffle(a).slice(0,Math.max(6,Math.min(S.settings.sessionLen,a.length)));
+  Q=[];pick.forEach(i=>Q.push({it:i,type:'intro',first:false}));
+  shuffle(pick).forEach(i=>Q.push({it:i,type:'mc-gr-de',first:true}));
+  shuffle(pick).forEach(i=>Q.push({it:i,type:typeFor(i,Math.max(2,(S.items[i.id]||{}).box||0)),first:true}));
+  sess={n:0,ok:0,xp0:S.xp,total:Q.length,hard:true};view='session';render();nextQ();
+}
+function hardCardHTML(){const n=hardItems().length;if(n<3||DEMO)return '';return `<div class="card" style="display:flex;align-items:center;gap:14px;border-left:4px solid var(--gold,#e0a800)"><div style="font-size:2rem">🎯</div><div style="flex:1"><h3 style="margin:0">${n} schwierige Wörter</h3><p class="meta" style="margin:2px 0 0">Diese Wörter gehen oft daneben. Eine kurze Extrarunde: erst ansehen und anhören, dann üben.</p></div><button class="primary" onclick="startHard()">Üben</button></div>`}
+/* ---------- Hörverstehen ---------- */
+function hearPool(){return NODES.filter(n=>n.D&&n.D.length>=3&&(pDone(n.id)||DEMO||S.settings.unlockAll))}
+function hearQs(l){
+  const D=l.D,sp=[...new Set(D.map(d=>d.sp))];
+  const otherDe=shuffle([...new Set(NODES.filter(n=>n.D&&n.id!==l.id).flatMap(n=>n.D.map(d=>d.de)))]).filter(x=>!D.some(d=>d.de===x));
+  const take=(arr,n)=>{const o=[];while(o.length<n&&arr.length)o.push(arr.pop());return o};
+  const qs=[];
+  shuffle(D.map((_,i)=>i)).slice(0,2).forEach(i=>qs.push({t:'mc',lab:'Welche Aussage kommt im Gespräch vor?',q:'🎧',dlg:l.id,hear:true,opts:shuffle([D[i].de].concat(take(otherDe,3))),a:D[i].de,expl:D[i].sp+': '+D[i].gr+' = '+D[i].de,full:D[i].gr+' = '+D[i].de,say:D[i].say}));
+  const pairs=[];for(let k=1;k<D.length;k++)if(D[k].sp!==D[k-1].sp)pairs.push(k);
+  shuffle(pairs).slice(0,2).forEach(k=>{let dist=shuffle([...new Set(D.filter((d,j)=>j!==k&&d.de!==D[k].de).map(d=>d.de))]).slice(0,3);if(dist.length<3)dist=dist.concat(take(otherDe,3-dist.length));
+    qs.push({t:'mc',lab:'Was antwortet '+D[k].sp+' darauf?',q:D[k-1].gr,sub:D[k-1].sp+' sagt: '+D[k-1].de,hear:true,say:D[k-1].say,opts:shuffle([D[k].de].concat(dist)),a:D[k].de,expl:D[k].sp+': '+D[k].gr+' = '+D[k].de,full:D[k].gr+' = '+D[k].de})});
+  if(sp.length>=2)shuffle(D.map((_,i)=>i)).slice(0,sp.length>=3?2:1).forEach(i=>qs.push({t:'mc',lab:'Wer sagt das?',q:D[i].gr,sub:D[i].de,hear:true,say:D[i].say,opts:shuffle(sp.slice(0,4)),a:D[i].sp,expl:D[i].sp+': '+D[i].gr,full:D[i].gr}));
+  const clean=w=>w.replace(/[^\p{L}'’]/gu,'');
+  const names=new Set(sp.map(x=>x.toLowerCase()));const words=[...new Set(D.flatMap(d=>d.gr.split(' ').map(clean)).filter(w=>w.length>=3&&!names.has(w.toLowerCase())))];
+  shuffle(D.filter(d=>d.gr.split(' ').length>=4)).slice(0,2).forEach(d=>{const toks=d.gr.split(' ');const cand=toks.map((w,i)=>({w:clean(w),i:i})).filter(x=>x.w.length>=3&&!names.has(x.w.toLowerCase()));if(!cand.length)return;
+    const c=cand[Math.floor(Math.random()*cand.length)];const q=toks.map((w,i)=>i===c.i?w.replace(c.w,'___'):w).join(' ');
+    const dist=shuffle(words.filter(w=>w.toLowerCase()!==c.w.toLowerCase())).slice(0,3);if(dist.length<3)return;
+    qs.push({t:'mc',lab:'Welches Wort fehlt? Hör genau hin.',q:q,hear:true,auto:true,say:d.say,opts:shuffle([c.w].concat(dist)),a:c.w,expl:d.gr+' = '+d.de,full:d.gr})});
+  return shuffle(qs);
+}
+function startHear(id){
+  const pool=hearPool();const l=id?NODEBY[id]:(pool.length?shuffle(pool)[0]:null);
+  if(!l||!l.D||l.D.length<3){toast('Schließe zuerst eine Lektion mit Gespräch im Lernpfad ab.');return}
+  const qs=hearQs(l);if(qs.length<3){toast('Für diese Lektion gibt es kein Hörverstehen.');return}
+  const names=[...new Set(l.D.map(d=>d.sp))].join(' und ');
+  const learn=[{h:'🎧 '+esc(l.dlg&&l.dlg.t?l.dlg.t:l.title),p:`<p>Hör dir das Gespräch zwischen <b>${esc(names)}</b> an, so oft du willst. Der Text bleibt verdeckt. Danach kommen ${qs.length} Fragen dazu.</p><div class="audiorow"><button class="primary" onclick="playDlg('${l.id}')">▶ Gespräch anhören</button><button onclick="stopSpeech()">⏹ Stopp</button></div><p class="meta">Tipp: Beim zweiten Hören auf die Antworten achten. In den Fragen kannst du einzelne Sätze noch einmal anhören.</p>`}];
+  startRun({id:'hear_'+l.id,g:{title:'Hörverstehen · '+l.title,learn:learn},title:'Hörverstehen',icon:'🎧',again:"startHear('"+l.id+"')",back:'home',qs:qs,learn:true,hear:l.id});
+}
+function hearCardHTML(){const p=hearPool();if(!p.length||DEMO)return '';const last=p[p.length-1];return `<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">🎧</div><div style="flex:1"><h3 style="margin:0">Gespräche üben</h3><p class="meta" style="margin:2px 0 0">Hörverstehen: nur zuhören und Fragen beantworten. Rollenspiel: selbst mitreden. ${p.length} Gespräch${p.length>1?'e':''} aus deinen Lektionen.</p></div><div style="display:flex;flex-direction:column;gap:6px"><button class="primary" onclick="startHear('${last.id}')">🎧 Hören</button><button onclick="go('role','${last.id}')">💬 Sprechen</button></div></div>`}
+let LASTACT=0;
+function tick(h){const now=Date.now();const d=LASTACT?Math.min(60,(now-LASTACT)/1000):5;h.t=Math.round(((h.t||0)+d)*10)/10;LASTACT=now;const g=S.settings.goal||20;if(h.n===g&&!h.g){h.g=1;setTimeout(()=>{toast('🎯 Tagesziel erreicht – stark!');confetti()},700)}}
+function mins(days){let t=0;for(let k=0;k<days;k++){const key=new Date(Date.now()-k*DAY).toLocaleDateString('sv-SE');t+=(S.hist[key]||{}).t||0}return Math.round(t/60)}
+function rolePool(){return hearPool().filter(n=>new Set(n.D.map(d=>d.sp)).size>=2)}
+function roleHTML(id){
+  const pool=rolePool();const l=id?NODEBY[id]:pool[pool.length-1];
+  if(!l||!pool.includes(l))return topbar()+`<div class="card center"><p>Schließe zuerst eine Lektion mit Gespräch im Lernpfad ab.</p><button class="primary" onclick="go('path')">Zum Lernpfad</button></div>`;
+  const sp=[...new Set(l.D.map(d=>d.sp))];
+  return topbar()+`<div class="top"><button class="ghost" onclick="go('home')">← Zurück</button></div>
+<div class="card"><h2 style="margin-top:0">💬 Rollenspiel: ${esc(l.dlg&&l.dlg.t?l.dlg.t:l.title)}</h2><p class="meta">Du übernimmst eine Rolle. Dein Gesprächspartner spricht, du antwortest: mal die Wörter ordnen, mal die passende Antwort wählen, mal selbst tippen.</p>
+<p><b>Welche Rolle möchtest du sprechen?</b></p><div class="opts">${sp.map(s=>`<button class="opt" onclick="startRole('${l.id}','${esc(s)}')">${esc(s)} <small>${l.D.filter(d=>d.sp===s).length} Sätze</small></button>`).join('')}</div>
+<p class="meta" style="margin-top:12px">Anderes Gespräch:</p><div class="vtools">${pool.filter(n=>n.id!==l.id).slice(-8).reverse().map(n=>`<button onclick="go('role','${n.id}')">${esc(n.title)}</button>`).join('')}</div></div>`;
+}
+function roleQs(l,who){
+  const D=l.D,qs=[];const mine=D.map((d,i)=>i).filter(i=>D[i].sp===who);
+  const otherLines=shuffle([...new Set(NODES.filter(n=>n.D).flatMap(n=>n.D.map(d=>d.gr)))]).filter(g=>!D.some(d=>d.gr===g));
+  mine.forEach((i,k)=>{const d=D[i],prev=i>0?D[i-1]:null;const base={pre:prev?prev.gr:null,preDe:prev?prev.de:'',preWho:prev?prev.sp:'',preSay:prev?prev.say:null,say:d.say,full:d.gr+' = '+d.de,expl:d.sp+': '+d.gr+' = '+d.de};
+    const nw=d.gr.split(' ').length;const kind=nw>=3&&nw<=9?(k%3===2?'mc':'arr'):'mc';
+    if(kind==='arr')qs.push(Object.assign({t:'arr',lab:'Deine Antwort – bring die Wörter in die richtige Reihenfolge',a:d.gr,sub:d.de},base));
+    else{let dist=shuffle([...new Set(D.filter((x,j)=>j!==i&&x.gr!==d.gr).map(x=>x.gr))]).slice(0,2);dist=dist.concat(otherLines.slice(0,3-dist.length));qs.push(Object.assign({t:'mc',lab:'Was sagst du? Wähle die passende Antwort',q:'💬',sub:'Du möchtest sagen: '+d.de,opts:shuffle([d.gr].concat(dist)),a:d.gr},base))}
+  });
+  return qs.slice(0,10);
+}
+function startRole(id,who){
+  const pool=rolePool();const l=id?NODEBY[id]:(pool.length?pool[pool.length-1]:null);
+  if(!l){toast('Schließe zuerst eine Lektion mit Gespräch im Lernpfad ab.');return}
+  if(!who){go('role',l.id);return}
+  const qs=roleQs(l,who);if(qs.length<2){toast('Diese Rolle hat zu wenige Sätze.');return}
+  startRun({id:'role_'+l.id,title:'Rollenspiel',icon:'💬',again:"startRole('"+l.id+"','"+who.replace(/'/g,"\\'")+"')",back:'home',qs:qs,role:l.id});
+}
+function thGet(){try{return localStorage.getItem('sprachen_lernen_theme')||'auto'}catch(e){return 'auto'}}
+function thApply(){const v=thGet();try{if(v==='auto')delete document.documentElement.dataset.theme;else document.documentElement.dataset.theme=v;const m=document.querySelector('meta[name=theme-color]');if(m)m.content=(v==='dark'||(v==='auto'&&matchMedia('(prefers-color-scheme:dark)').matches))?'#0e1626':'#1257a8'}catch(e){}}
+function thSet(v){try{localStorage.setItem('sprachen_lernen_theme',v)}catch(e){}thApply();render()}
+try{thApply()}catch(e){}
+function wrongListHTML(w){if(!w||!w.length)return '';return `<div class="card"><h3 style="margin-top:0">Nochmal ansehen (${w.length})</h3><p class="meta" style="margin:0 0 6px">Das ging in dieser Runde daneben. Einmal lesen und anhören hilft beim nächsten Mal.</p>${w.map(x=>`<div class="wrow"><button class="play sm" data-s="${esc(x.say||x.full)}" onclick="speak(this.dataset.s)">▶</button><div class="wt"><b>${esc(x.full)}</b></div></div>`).join('')}</div>`}
+function qGaps(l,n){
+  const cl=w=>w.replace(/[^\p{L}'’]/gu,'').toLowerCase();
+  const forms={};l.W.forEach(w=>{const f=cl(LANG.artless?LANG.artless(w.gr):w.gr);if(f.length>=3&&!f.includes(' '))forms[f]=w});
+  const out=[];const sents=shuffle((l.S||[]).concat(l.D||[]).filter(s=>s.gr.split(' ').length>=4));
+  for(const s of sents){if(out.length>=n)break;const toks=s.gr.split(' ');const hits=toks.map((t,i)=>({i:i,f:cl(t)})).filter(x=>forms[x.f]);if(!hits.length)continue;
+    const hit=hits[Math.floor(Math.random()*hits.length)],w=forms[hit.f];const shown=toks[hit.i].replace(/[\p{L}'’]+/u,'___');
+    const dist=shuffle(Object.keys(forms).filter(f=>f!==hit.f)).slice(0,3).map(f=>{const o=toks[hit.i].match(/[\p{L}'’]+/u)[0];const src=LANG.artless?LANG.artless(forms[f].gr):forms[f].gr;return src});
+    if(dist.length<3)continue;const ans=toks[hit.i].match(/[\p{L}'’]+/u)[0];
+    out.push({t:'mc',lab:'Welches Wort passt in die Lücke?',q:toks.map((t,i)=>i===hit.i?shown:t).join(' '),sub:s.de,opts:shuffle([ans].concat(dist)),a:ans,say:s.say,full:s.gr+' = '+s.de,expl:w.gr+' = '+w.de})}
+  return out;
+}
+function weakLessons(){return NODES.filter(n=>n.type!=='test'&&S.path[n.id]&&S.path[n.id].done&&!S.path[n.id].skipped&&S.path[n.id].stars<=1&&NODES.indexOf(n)!==curNodeIdx())}
+function weakCardHTML(){const w=weakLessons();if(!w.length||DEMO)return '';const n=w[w.length-1];return `<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">💪</div><div style="flex:1"><h3 style="margin:0">Lektion mit nur einem Stern</h3><p class="meta" style="margin:2px 0 0">${esc(n.icon+' '+n.title)}${w.length>1?' und '+(w.length-1)+' weitere':''} – eine Wiederholung bringt dir mehr Sterne und festigt die Wörter.</p></div><button onclick="startNode('${n.id}',true)">Nochmal</button></div>`}
+function gramDue(){const now=Date.now();return GRAM.filter(g=>S.gram[g.id]&&S.gram[g.id].done&&gramOpen(g)&&(S.gram[g.id].last?now-S.gram[g.id].last>7*DAY:S.gram[g.id].stars<3))}
+function gramRefreshCardHTML(){const d=gramDue();if(!d.length||DEMO)return '';const g=d[0];return `<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">📘</div><div style="flex:1"><h3 style="margin:0">Grammatik auffrischen</h3><p class="meta" style="margin:2px 0 0">„${esc(g.title)}“ ist länger her${d.length>1?', '+(d.length-1)+' weitere Themen auch':''}. Eine kurze Übungsrunde hält es frisch.</p></div><button onclick="startLesson('${g.id}',true)">Üben</button></div>`}
+const READS=()=>LANG.READ||[];
+function readOpen(r){return !r.after||!NODEBY[r.after]||pDone(r.after)||S.settings.unlockAll||DEMO}
+function readCardHTML(){const all=READS(),op=all.filter(readOpen);if(!op.length||DEMO)return '';const next=op.find(r=>!S.hi['read_'+r.id])||op[op.length-1];return `<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">📖</div><div style="flex:1"><h3 style="margin:0">Lesen</h3><p class="meta" style="margin:2px 0 0">${op.length} von ${all.length} Texten frei · ${next.icon} ${esc(next.title)}</p></div><button class="primary" onclick="go('readtext','${next.id}')">Lesen</button></div>`}
+function readHTML(){
+  const all=READS();
+  return topbar()+`<h2 style="margin:4px 0">📖 Lesen</h2><p class="meta" style="margin:0 0 10px">Kurze Texte zum Lernpfad. Erst lesen und anhören, dann Fragen beantworten. Die Übersetzung lässt sich Satz für Satz einblenden.</p>
+<div class="units">${all.map(r=>{const op=readOpen(r),best=S.hi['read_'+r.id],af=NODEBY[r.after];return `<div class="card unit" style="${op?'':'opacity:.6'}"><span class="ico">${op?r.icon:'🔒'}</span><h3>${esc(r.title)}</h3><p class="meta" style="margin:0 0 6px">${r.text.length} Sätze${af?(op?' · ab Lektion '+af.idx:' · wird frei nach Lektion '+af.idx+': '+esc(af.title)):''}${best?' · bestes Ergebnis '+best+' %':''}</p><div class="row">${op?`<button class="primary" onclick="go('readtext','${r.id}')">${best?'Nochmal lesen':'Lesen'}</button>`:'<button disabled>Gesperrt</button>'}</div></div>`}).join('')}</div>`;
+}
+let RT={show:{},all:false};
+function readTextHTML(id){
+  const r=READS().find(x=>x.id===id);if(!r||!readOpen(r))return readHTML();
+  if(RT.id!==id){RT={id:id,show:{},all:false}}
+  const say=s=>s.replace(/[«»„“"]/g,'');
+  return topbar()+`<div class="top"><button class="ghost" onclick="go('read')">← Alle Texte</button><div style="display:flex;gap:8px"><button onclick="readPlayAll('${id}')">▶ Alles vorlesen</button><button onclick="stopSpeech()">⏹</button></div></div>
+<div class="card"><h2 style="margin-top:0">${r.icon} ${esc(r.title)}</h2>
+${r.text.map((t,i)=>`<div class="wrow" style="align-items:flex-start"><button class="play sm" data-s="${esc(say(t))}" onclick="speak(this.dataset.s)">▶</button><div class="wt" style="flex:1"><div style="font-size:1.15rem;line-height:1.5">${esc(t)}</div>${RT.all||RT.show[i]?`<div class="wd">${esc(r.de[i])}</div>`:`<button class="ghost" style="padding:2px 8px;font-size:.8rem" onclick="RT.show[${i}]=true;render()">Übersetzung</button>`}</div></div>`).join('')}
+<div class="vtools" style="margin-top:10px"><button onclick="RT.all=!RT.all;render()">${RT.all?'Übersetzungen ausblenden':'Alle Übersetzungen zeigen'}</button></div>
+${r.gloss&&r.gloss.length?`<h3 style="margin:14px 0 6px">Wörter zum Text</h3><div class="vtools">${r.gloss.map(g=>`<button data-s="${esc(say(g[0]))}" onclick="speak(this.dataset.s)" title="Anhören">${esc(g[0])} <small class="meta">${esc(g[1])}</small></button>`).join('')}</div>`:''}
+<div class="actions" style="margin-top:14px"><button class="primary" onclick="startRead('${id}')">Fragen beantworten (${r.qs.length})</button></div></div>`;
+}
+function readPlayAll(id){const r=READS().find(x=>x.id===id);if(!r||!TTS)return;stopSpeech();const tk=SPK;const v=greekVoice();let i=0;const nx=()=>{if(tk!==SPK||i>=r.text.length)return;const u=new SpeechSynthesisUtterance(r.text[i++].replace(/[«»„“"]/g,''));u.lang=LANG.tts;if(v)u.voice=v;u.rate=S.settings.rate;u.onstart=()=>{if(tk!==SPK)speechSynthesis.cancel()};u.onend=()=>setTimeout(nx,300);window._utt=u;speechSynthesis.speak(u)};setTimeout(nx,40)}
+function startRead(id){
+  const r=READS().find(x=>x.id===id);if(!r)return;
+  const qs=shuffle(r.qs).map(q=>({t:'mc',lab:'Frage zum Text',q:q[0],opts:shuffle([q[1]].concat(q[2])),a:q[1],expl:q[1],full:q[0]+' – '+q[1],say:null,noSay:true}));
+  startRun({id:'read_'+id,title:'Lesen',icon:'📖',again:"go('readtext','"+id+"')",back:'read',qs:qs,read:id});
+}
+function numWord(n){
+  const id=LANG.id;
+  if(id==='el'){const u=['μηδέν','ένα','δύο','τρία','τέσσερα','πέντε','έξι','εφτά','οχτώ','εννιά','δέκα','έντεκα','δώδεκα','δεκατρία','δεκατέσσερα','δεκαπέντε','δεκαέξι','δεκαεφτά','δεκαοχτώ','δεκαεννιά'],t=['','','είκοσι','τριάντα','σαράντα','πενήντα','εξήντα','εβδομήντα','ογδόντα','ενενήντα'],h=['','εκατό','διακόσια','τριακόσια','τετρακόσια','πεντακόσια','εξακόσια','εφτακόσια','οχτακόσια','εννιακόσια'];
+    if(n===1000)return 'χίλια';if(n<20)return u[n];if(n<100)return t[Math.floor(n/10)]+(n%10?' '+u[n%10]:'');const r=n%100;return (r&&Math.floor(n/100)===1?'εκατόν':h[Math.floor(n/100)])+(r?' '+numWord(r):'')}
+  if(id==='no'){const u=['null','en','to','tre','fire','fem','seks','sju','åtte','ni','ti','elleve','tolv','tretten','fjorten','femten','seksten','sytten','atten','nitten'],t=['','','tjue','tretti','førti','femti','seksti','sytti','åtti','nitti'];
+    if(n===1000)return 'tusen';if(n<20)return u[n];if(n<100)return t[Math.floor(n/10)]+(n%10?u[n%10]:'');const r=n%100,c=Math.floor(n/100);return (c===1?'hundre':u[c]+' hundre')+(r?' og '+numWord(r):'')}
+  if(id==='fr'){const u=['zéro','un','deux','trois','quatre','cinq','six','sept','huit','neuf','dix','onze','douze','treize','quatorze','quinze','seize','dix-sept','dix-huit','dix-neuf'],t=['','','vingt','trente','quarante','cinquante','soixante','soixante','quatre-vingt','quatre-vingt'];
+    if(n===1000)return 'mille';if(n<20)return u[n];
+    if(n<100){const d=Math.floor(n/10),r=n%10;if(d===7||d===9){const x=n-(d===7?60:80);return t[d]+(x===11&&d===7?' et ':'-')+u[x]}if(d===8)return r?'quatre-vingt-'+u[r]:'quatre-vingts';if(r===1)return t[d]+' et un';return t[d]+(r?'-'+u[r]:'')}
+    const r=n%100,c=Math.floor(n/100);return (c===1?'cent':u[c]+' cent'+(r?'':'s'))+(r?' '+numWord(r):'')}
+  return String(n);
+}
+function numPool(){const a=[];for(let i=0;i<=20;i++)a.push(i);[21,22,25,28,30,33,37,40,44,45,50,56,60,66,70,71,72,75,77,80,81,88,90,91,95,99,100,101,110,120,150,200,250,300,400,500,650,700,800,900,999,1000].forEach(x=>a.push(x));return a}
+function numQs(n){
+  const pool=numPool();const near=x=>{const c=new Set();const cand=pool.filter(y=>y!==x);const close=cand.filter(y=>Math.abs(y-x)<=12||String(y).length===String(x).length);const src=close.length>=3?close:cand;while(c.size<3){c.add(src[Math.floor(Math.random()*src.length)])}return [...c]};
+  const qs=[];
+  shuffle(pool).slice(0,n).forEach((x,i)=>{const w=numWord(x),k=i%3;
+    if(k===0)qs.push({t:'mc',lab:'Hör zu: Welche Zahl ist das?',q:'🎧',hear:true,auto:true,say:w,opts:shuffle([String(x)].concat(near(x).map(String))),a:String(x),full:w+' = '+x,expl:w+' = '+x});
+    else if(k===1)qs.push({t:'mc',lab:'Wie heißt diese Zahl auf '+LANG.name+'?',q:String(x),say:w,opts:shuffle([w].concat(near(x).map(numWord))),a:w,full:w+' = '+x,expl:w+' = '+x});
+    else qs.push({t:'fill',lab:'Schreibe die Zahl in Ziffern',q:w,hear:true,say:w,a:String(x),alt:[],full:w+' = '+x,expl:w+' = '+x,digits:true});
+  });
+  return qs;
+}
+function startNumbers(){startRun({id:'numbers',title:'Zahlen',icon:'🔢',again:'startNumbers()',back:'games',game:true,hearts:3,qs:numQs(12)})}
+function timeWord(h,m){
+  const id=LANG.id;const nh=h%12===0?12:h%12,nx=nh%12+1;
+  if(id==='el'){const H=['','μία','δύο','τρεις','τέσσερις','πέντε','έξι','εφτά','οχτώ','εννιά','δέκα','έντεκα','δώδεκα'],M={5:'πέντε',10:'δέκα',15:'τέταρτο',20:'είκοσι',25:'είκοσι πέντε',30:'μισή'};
+    if(m===0)return 'Είναι '+H[nh]+(nh===1?' η ώρα':'')+'.';if(m<=30)return 'Είναι '+H[nh]+' και '+M[m]+'.';return 'Είναι '+H[nx]+' παρά '+M[60-m]+'.'}
+  if(id==='no'){const H=['','ett','to','tre','fire','fem','seks','sju','åtte','ni','ti','elleve','tolv'];
+    const map={0:'Klokka er '+H[nh]+'.',5:'Klokka er fem over '+H[nh]+'.',10:'Klokka er ti over '+H[nh]+'.',15:'Klokka er kvart over '+H[nh]+'.',20:'Klokka er ti på halv '+H[nx]+'.',25:'Klokka er fem på halv '+H[nx]+'.',30:'Klokka er halv '+H[nx]+'.',35:'Klokka er fem over halv '+H[nx]+'.',40:'Klokka er ti over halv '+H[nx]+'.',45:'Klokka er kvart på '+H[nx]+'.',50:'Klokka er ti på '+H[nx]+'.',55:'Klokka er fem på '+H[nx]+'.'};return map[m]}
+  if(id==='fr'){const H=['','une heure','deux heures','trois heures','quatre heures','cinq heures','six heures','sept heures','huit heures','neuf heures','dix heures','onze heures','douze heures'],M={5:'cinq',10:'dix',15:'et quart',20:'vingt',25:'vingt-cinq',30:'et demie'};
+    if(m===0)return 'Il est '+H[nh]+'.';if(m<=30)return 'Il est '+H[nh]+' '+M[m]+'.';const r=60-m;return 'Il est '+H[nx]+' moins '+(r===15?'le quart':M[r])+'.'}
+  return h+':'+m;
+}
+const timeDig=(h,m)=>(h%12===0?12:h%12)+':'+(m<10?'0':'')+m;
+function clockQs(n){
+  const all=[];for(let h=1;h<=12;h++)for(const m of [0,5,10,15,20,25,30,35,40,45,50,55])all.push([h,m]);
+  const near=(h,m)=>{const c=[];const cand=shuffle(all.filter(x=>!(x[0]===h&&x[1]===m)));const close=cand.filter(x=>x[0]===h||x[1]===m||(x[0]===(h%12)+1&&x[1]===60-m));(close.length>=3?close:cand).slice(0,3).forEach(x=>c.push(x));return c};
+  const qs=[];shuffle(all).slice(0,n).forEach((x,i)=>{const [h,m]=x,w=timeWord(h,m),d=timeDig(h,m),k=i%3,alts=near(h,m);
+    if(k===0)qs.push({t:'mc',lab:'Hör zu: Wie spät ist es?',q:'🎧',hear:true,auto:true,say:w,opts:shuffle([d].concat(alts.map(a=>timeDig(a[0],a[1])))),a:d,full:w+' = '+d+' Uhr',expl:w+' = '+d+' Uhr'});
+    else if(k===1)qs.push({t:'mc',lab:'Wie sagt man das auf '+LANG.name+'?',q:d+' Uhr',say:w,opts:shuffle([w].concat(alts.map(a=>timeWord(a[0],a[1])))),a:w,full:w+' = '+d+' Uhr',expl:w+' = '+d+' Uhr'});
+    else qs.push({t:'fill',lab:'Schreibe die Uhrzeit (z. B. 3:30)',q:w,hear:true,say:w,a:d,alt:[('0'+d).slice(-5),d.replace(':','.'),d.replace(':',''),('0'+d).slice(-5).replace(':','')],full:w+' = '+d+' Uhr',expl:w+' = '+d+' Uhr',digits:true});
+  });
+  return qs;
+}
+function startClock(){startRun({id:'clock',title:'Uhrzeit',icon:'🕒',again:'startClock()',back:'games',game:true,hearts:3,qs:clockQs(12)})}
+function go(v,arg){if(v!=='vocab')VPLAY=null;stopSpeech();document.querySelectorAll('.confetti').forEach(e=>e.remove());clearTimers();view=v;viewArg=arg;render()}
+function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.10</small></div>
 <div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
 function unitProgress(u){
   const ids=ALL.filter(i=>i.unit===u.id);
@@ -3752,7 +4068,7 @@ function unitProgress(u){
 function homeHTML(){
   const due=dueCount();
   const h=S.hist[today()]||{n:0};
-  const goal=20;
+  const goal=S.settings.goal||20;
   return topbar()+lastLine()+`
 <div class="stats">
   <div class="stat"><b>🔥 ${S.lastDay===today()||S.lastDay===new Date(Date.now()-DAY).toLocaleDateString('sv-SE')?S.streak:0}</b><small>Tage am Stück</small></div>
@@ -3760,7 +4076,7 @@ function homeHTML(){
   <div class="stat"><b>${h.n}/${goal}</b><small>Antworten heute</small></div>
 </div>
 <div class="card lvl"><div class="lv">${lvl()}</div><div style="flex:1"><b>${esc(levelTitle())}</b><div class="bar" style="margin:6px 0"><i style="width:${S.xp%100}%"></i></div><small class="meta">${S.xp%100}/100 Punkte bis Level ${lvl()+1}</small></div></div>
-${DEMO?demoCardHTML():''}${continueCardHTML()}${vocabItems().length?`<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">📚</div><div style="flex:1"><h3 style="margin:0">Mein Wortschatz</h3><p class="meta" style="margin:2px 0 0">${vocabItems().length} Wörter gelernt – ansehen, anhören, gezielt üben</p></div><button class="primary" onclick="go('vocab')">Öffnen</button></div>`:''}
+${DEMO?demoCardHTML():''}${continueCardHTML()}${weakCardHTML()}${hardCardHTML()}${gramRefreshCardHTML()}${hearCardHTML()}${readCardHTML()}${vocabItems().length?`<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">📚</div><div style="flex:1"><h3 style="margin:0">Mein Wortschatz</h3><p class="meta" style="margin:2px 0 0">${vocabItems().length} Wörter gelernt – ansehen, anhören, gezielt üben</p></div><button class="primary" onclick="go('vocab')">Öffnen</button></div>`:''}
 <div class="daily"><div><h2>Tägliche Wiederholung</h2><p>${due?due+' Vokabeln sind zur Wiederholung fällig':'Heute ist nichts fällig. Weiter mit dem Lernpfad!'}</p></div>
 <div style="display:flex;flex-direction:column;gap:6px"><button onclick="${due?'startSession()':"go('path')"}">${due?'Üben':'Lernpfad'}</button>${due?`<button onclick="startCards(vocabItems().filter(i=>S.items[i.id].due<=Date.now()),'Fällige Karten')">🃏 Karten</button>`:''}</div></div>
 ${S.settings.speak?`<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">🎤</div><div style="flex:1"><h3>Aussprache üben</h3><p class="meta" style="margin:2px 0 0">Hör zu, sprich nach – die App zeigt dir, wie gut es klang.</p></div><button class="primary" onclick="startPron()">Los</button></div>`:''}
@@ -3779,16 +4095,26 @@ function listHTML(uid){
 <div class="txt"><div class="gr">${esc(i.gr)}</div><div class="tr">${esc(i.tr)}</div><div class="de">${esc(i.de)}</div></div>
 <button class="play" onclick="playId('${i.id}')">▶</button><button class="play" onclick="playId('${i.id}',true)">🐢</button></div>`}).join('')}</div></div>`;
 }
+function levelCardHTML(){
+  const all=vocabItems(),c=[0,0,0,0];all.forEach(i=>c[vLevel(S.items[i.id])]++);const hard=hardItems().length,n=Math.max(1,all.length);
+  const hs=Object.keys(S.hi).filter(k=>k.startsWith('hear_'));const hAvg=hs.length?Math.round(hs.reduce((a,k)=>a+S.hi[k],0)/hs.length):0;
+  const row=(t,v,col)=>`<div style="margin:8px 0"><div style="display:flex;justify-content:space-between"><span>${t}</span><span class="meta">${v} (${Math.round(v/n*100)} %)</span></div><div class="bar"><i style="width:${v/n*100}%;background:${col}"></i></div></div>`;
+  return `<div class="card"><h3>Mein Wortschatz (${all.length} Wörter)</h3>${row('Sicher',c[3],'var(--good)')}${row('Im Lernen',c[2],'var(--blue2)')}${row('Neu',c[1],'var(--gold,#e0a800)')}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><span>⚠️ Schwierige Wörter: <b>${hard}</b></span>${hard?`<button onclick="startHard()">Gezielt üben</button>`:'<span class="meta">keine – super!</span>'}</div>
+${hs.length?`<div class="meta" style="margin-top:8px">🎧 Hörverstehen: ${hs.length} Gespräch${hs.length>1?'e':''} geübt · im Schnitt ${hAvg} % verstanden</div>`:''}</div>`;
+}
 function statsHTML(){
   const seen=ALL.filter(i=>S.items[i.id]&&S.items[i.id].seen>0).length;
   const mast=ALL.filter(i=>S.items[i.id]&&S.items[i.id].box>=4).length;
   let n=0,ok=0;Object.values(S.hist).forEach(h=>{n+=h.n;ok+=h.ok});
-  const days=[];for(let k=6;k>=0;k--){const d=new Date(Date.now()-k*DAY);const key=d.toLocaleDateString('sv-SE');days.push({l:d.toLocaleDateString('de-DE',{weekday:'short'}),n:(S.hist[key]||{n:0}).n})}
+  const days=[];for(let k=13;k>=0;k--){const d=new Date(Date.now()-k*DAY);const key=d.toLocaleDateString('sv-SE');days.push({l:d.toLocaleDateString('de-DE',{weekday:'short'}).replace('.',''),n:(S.hist[key]||{n:0}).n,ok:(S.hist[key]||{ok:0}).ok})}
+  const wk=days.slice(7).reduce((a,d)=>a+d.n,0),wk0=days.slice(0,7).reduce((a,d)=>a+d.n,0),act=days.filter(d=>d.n>0).length;
   const mx=Math.max(10,...days.map(d=>d.n));
   return topbar()+`<div class="top"><button class="ghost" onclick="go('home')">← Zurück</button></div>
 <div class="stats"><div class="stat"><b>${seen}/${ALL.length}</b><small>Vokabeln gelernt</small></div><div class="stat"><b>${mast}</b><small>sicher gelernt</small></div><div class="stat"><b>${n?Math.round(ok/n*100):0}%</b><small>Trefferquote</small></div></div>
 <div class="card"><h3>Lernpfad A1</h3><div class="bar gold" style="margin:8px 0"><i style="width:${pCount(false)/NODES.length*100}%"></i></div><small class="meta">${pCount(true)} von ${NODES.filter(n=>n.type!=='test').length} Lektionen · ${NODES.filter(n=>n.type==='test'&&pDone(n.id)).length} von ${NODES.filter(n=>n.type==='test').length} Checks bestanden</small></div>
-<div class="card"><h3>Letzte 7 Tage</h3><div class="chart">${days.map(d=>`<div><i style="height:${d.n/mx*90}px"></i>${d.n}<br>${d.l}</div>`).join('')}</div></div>
+<div class="card"><h3>Letzte 14 Tage</h3><p class="meta" style="margin:0">${wk} Antworten in dieser Woche${wk0?' · Vorwoche '+wk0:''} · an ${act} von 14 Tagen gelernt${mins(7)?' · ca. '+mins(7)+' Min Lernzeit diese Woche':''}</p><div class="chart c14">${days.map(d=>`<div title="${d.n} Antworten, ${d.ok} richtig"><i style="height:${d.n/mx*90}px"></i>${d.n||''}<br>${d.l}</div>`).join('')}</div></div>
+${vocabItems().length?levelCardHTML():''}
 <div class="card"><h3>Abzeichen (${Object.keys(S.badges).length}/${BADGES.length})</h3><div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges[b.id]?'':'lock'}"><div style="font-size:1.8rem">${b.ico}</div><b>${esc(b.t)}</b><small class="meta">${esc(b.d)}</small></div>`).join('')}</div></div>
 ${UNITS.length?`<div class="card"><h3>Fortschritt je Liste</h3>`:''}${UNITS.map(u=>{const p=unitProgress(u);return `<div style="margin:10px 0"><div style="display:flex;justify-content:space-between"><span>${u.icon} ${esc(u.title)}</span><span class="meta">${p.mast}/${p.n} sicher</span></div><div class="bar gold"><i style="width:${p.mast/p.n*100}%"></i></div></div>`}).join('')}${UNITS.length?'</div>':''}`;
 }
@@ -3798,7 +4124,7 @@ function settingsHTML(){
   const list=el.length?el:voices;
   const cur=greekVoice();
   return topbar()+`<div class="top"><button class="ghost" onclick="go('home')">← Zurück</button></div>
-<div class="card"><h3>Anzeige</h3><div class="field"><label>Schriftgröße<small>Gilt nur für dieses Gerät${fsAutoBig()?' · Tablet erkannt':''}</small></label><select onchange="fsSet(this.value)">${[['auto','Automatisch ('+fsAuto()+' %)'],['100','Normal (100 %)'],['115','Groß (115 %)'],['130','Größer (130 %)'],['150','Sehr groß (150 %)']].map(o=>`<option value="${o[0]}" ${fsGet()===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div></div>
+<div class="card"><h3>Anzeige</h3><div class="field"><label>Design<small>Gilt nur für dieses Gerät</small></label><select onchange="thSet(this.value)">${[['auto','Wie das Gerät'],['light','Hell'],['dark','Dunkel']].map(o=>`<option value="${o[0]}" ${thGet()===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div><div class="field"><label>Schriftgröße<small>Gilt nur für dieses Gerät${fsAutoBig()?' · Tablet erkannt':''}</small></label><select onchange="fsSet(this.value)">${[['auto','Automatisch ('+fsAuto()+' %)'],['100','Normal (100 %)'],['115','Groß (115 %)'],['130','Größer (130 %)'],['150','Sehr groß (150 %)']].map(o=>`<option value="${o[0]}" ${fsGet()===o[0]?'selected':''}>${o[1]}</option>`).join('')}</select></div></div>
 <div class="card"><h3>Benutzer & Sprache</h3><div class="field"><label>${DEMO?'🎬 Demo-Modus':'👤 '+esc(USER||'')}<small>${DEMO?'Fortschritt wird beim Beenden gelöscht':'Angemeldet'}</small></label><button onclick="logout()">${DEMO?'Demo beenden':'Abmelden'}</button></div><div class="field"><label>${LANG.flag} ${esc(LANG.name)}<small>Jede Sprache hat eigenen Fortschritt</small></label><button onclick="go('choose')">Wechseln</button></div></div>
 <div class="card"><h3>Audio</h3>
 ${TTS?(el.length?'':'<div class="warn">Keine ${LANG.voiceAdj} Stimme gefunden. Installiere unter Windows/macOS/Android eine ${LANG.voiceAdj} Sprachausgabe (Einstellungen → Sprache), dann lade die Seite neu.</div>'):'<div class="warn">Sprachausgabe wird nicht unterstützt.</div>'}
@@ -3809,6 +4135,7 @@ ${TTS?(el.length?'':'<div class="warn">Keine ${LANG.voiceAdj} Stimme gefunden. I
 <div class="field"><label>Spracheingabe<small>${SR?'Verfügbar (Browser-Mikrofon, am besten Chrome/Edge)':'In diesem Browser nicht verfügbar – nutze Chrome oder Edge'}</small></label><span>${SR?'✅':'❌'}</span></div></div>
 <div class="card"><h3>Lernen</h3>
 <div class="field"><label>Neue Vokabeln pro Runde</label><input type="number" min="1" max="20" value="${s.newPer}" onchange="S.settings.newPer=Math.max(1,+this.value||5);save()"></div>
+<div class="field"><label>Tagesziel<small>Antworten pro Tag – zählt für die Serie</small></label><select onchange="S.settings.goal=+this.value;save()">${[10,20,30,50,80].map(g=>`<option value="${g}" ${(s.goal||20)===g?'selected':''}>${g} Antworten</option>`).join('')}</select></div>
 <div class="field"><label>Aufgaben pro Wiederholung</label><input type="number" min="5" max="50" value="${s.sessionLen}" onchange="S.settings.sessionLen=Math.max(5,+this.value||12);save()"></div>
 ${LANG.hasTr?`<div class="field"><label>Lautschrift anzeigen</label><input type="checkbox" ${s.translit?'checked':''} onchange="S.settings.translit=this.checked;save()"></div>`:''}
 <div class="field"><label>Alle Stationen freischalten<small>Frei im Lernpfad springen</small></label><input type="checkbox" ${s.unlockAll?'checked':''} onchange="S.settings.unlockAll=this.checked;save()"></div>
@@ -3822,7 +4149,7 @@ ${CLOUD.on&&!DEMO?`<p class="meta">☁️ Dein Fortschritt wird automatisch onli
 <div class="field"><label>Alles exportieren<small>Alle Sprachen von ${esc(USER||'')} als Datei – Notfallkopie</small></label><button onclick="exportAll()">⬇ Datei</button></div>
 <div class="field"><label>Aus Datei wiederherstellen<small>Sicherungsdatei einlesen (alle Sprachen oder eine)</small></label><button onclick="$('#imp').click()">⬆ Datei</button></div>
 <div class="field"><label>Diese Sprache zurücksetzen<small>Löscht den Fortschritt in ${esc(LANG.name)}</small></label><button class="ghost" onclick="resetData()">Zurücksetzen</button></div>
-<p class="meta" style="margin-top:10px">Version 1.02 · Build ${APP_VERSION}</p>
+<p class="meta" style="margin-top:10px">Version 1.10 · Build ${APP_VERSION}</p>
 <input id="imp" type="file" accept=".json" hidden onchange="importData(this.files[0])"></div>`;
 }
 function exportData(){const b=new Blob([JSON.stringify(S)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(USER||'gast').toLowerCase()+'-'+LANG.exportName;a.click()}
@@ -3832,7 +4159,7 @@ function summaryHTML(){
   const acc=sess.n?Math.round(sess.ok/sess.n*100):0;
   return topbar()+`<div class="card center summary"><div class="big">${acc>=80?'🎉':acc>=50?'👍':'💪'}</div><h2>Runde geschafft!</h2>
 <p>${sess.ok} von ${sess.n} Antworten richtig (${acc}%)<br>+${S.xp-sess.xp0} Punkte</p>
-<div class="actions"><button class="primary" onclick="startSession()">Nächste Runde</button><button onclick="go('home')">Zur Übersicht</button></div></div>`;
+<div class="actions"><button class="primary" onclick="startSession()">Nächste Runde</button><button onclick="go('home')">Zur Übersicht</button></div></div>${wrongListHTML(sess.wrong)}`;
 }
 
 /* ---------- Aufgaben ---------- */
@@ -3906,6 +4233,7 @@ function giveUp(){if(cur.answered)return;cur.answered=true;const a=$('#ans');if(
 function skipQ(){stopSpeech();nextQ()}
 function feedback(ok,note){
   const it=cur.it;
+  if(!ok&&sess){(sess.wrong=sess.wrong||[]);if(!sess.wrong.some(x=>x.id===it.id))sess.wrong.push({id:it.id,full:it.gr+' = '+it.de,say:it.say})}
   if(ok&&cur.type!=='mc-gr-de'&&cur.type!=='speak')speak(it.say);
   score(ok);
   const g=UBY[it.unit].alpha?`${esc(it.gr)} · ${esc(it.say)}`:esc(it.gr);
@@ -3981,7 +4309,7 @@ const BADGES=[
 function checkBadges(){let n=0;BADGES.forEach(b=>{if(!S.badges[b.id]&&b.test()){S.badges[b.id]=today();toast('🏅 Abzeichen: '+b.t);n++}});if(n)save()}
 function confetti(){
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-  const em=['🎉','⭐','✨','🇬🇷','🫒'];
+  const em=['🎉','⭐','✨',LANG.flag,'🎊'];
   for(let i=0;i<28;i++){const d=document.createElement('div');d.className='confetti';d.textContent=em[i%em.length];d.style.left=Math.random()*100+'vw';d.style.animationDelay=Math.random()*.8+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),3600)}
 }
 let AC=null;
@@ -3994,8 +4322,8 @@ function clearTimers(){timers.forEach(t=>{clearInterval(t);clearTimeout(t)});tim
 
 const NAVV=['home','path','ref','vocab','list','settings','stats','summary','grammar','games','gsummary'];
 function navHTML(){
-  const it=[['home','🏠','Start'],['path','🗺️','Lernpfad'],['vocab','📚','Wörter'],['grammar','📘','Grammatik'],['games','🎮','Spiele'],['stats','📊','Fortschritt']];
-  let act=view;if(view==='summary')act='home';if(view==='ref')act='grammar';if(view==='cards')act='vocab';if(view==='list')act=(UBY[viewArg]&&UBY[viewArg].hidden)?'path':'home';if(view==='gsummary')act=(GS&&GS.back)||'games';
+  const it=[['home','🏠','Start'],['path','🗺️','Lernpfad'],['vocab','📚','Wörter'],['grammar','📘','Grammatik'],['games','🎮','Üben'],['stats','📊','Fortschritt']];
+  let act=view;if(view==='summary')act='home';if(view==='ref')act='grammar';if(view==='cards')act='vocab';if(view==='list')act=(UBY[viewArg]&&UBY[viewArg].hidden)?'path':'home';if(view==='gsummary')act=(GS&&GS.back)||'games';if(view==='read'||view==='readtext')act='home';
   return `<nav class="bnav">${it.map(x=>`<button class="${act===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join('')}</nav>`;
 }
 
@@ -4010,7 +4338,7 @@ const GRBY={};GRAM.forEach(g=>GRBY[g.id]=g);
 let L=null,GS=null,G=null;
 function startRun(o){
   clearTimers();cur=null;
-  L={id:o.id,path:o.path||null,test:!!o.test,g:o.g||null,title:o.title,icon:o.icon,again:o.again,back:o.back,game:!!o.game,hearts:o.hearts==null?null:o.hearts,
+  L={id:o.id,path:o.path||null,test:!!o.test,g:o.g||null,title:o.title,icon:o.icon,again:o.again,back:o.back,game:!!o.game,hear:o.hear||null,role:o.role||null,read:o.read||null,hearts:o.hearts==null?null:o.hearts,
      mode:o.learn?'learn':'q',p:0,Q:o.qs.map(q=>Object.assign({first:true},q)),total:o.qs.length,total0:o.qs.length,n:0,ok:0,firstOk:0,combo:0,bestc:0,xp0:S.xp,cur:null,over:false};
   view='lesson';
   if(L.mode==='learn')renderLearn();else nextLQ();
@@ -4039,11 +4367,11 @@ function renderLQ(){
 ${q.hear?hearRow():''}<div class="opts">${q.opts.map((o,i)=>`<button class="opt" onclick="lpick(${i})">${esc(o)}</button>`).join('')}</div></div>`;
   }else if(q.t==='fill'){
     body=`<div class="card q"><div class="label">${esc(q.lab||'Ergänze das Wort')}</div><div class="big" style="font-size:1.9rem">${gapify(q.q)}</div>${q.sub?`<div class="sub">${esc(q.sub)}</div>`:''}
-${q.hear?hearRow():''}<div style="margin-top:14px"><input id="ans" class="txt" lang="${LANG.lang2}" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="…" onkeydown="if(event.key==='Enter')lfill()"></div>${kbdHTML()}
+${q.hear?hearRow():''}<div style="margin-top:14px"><input id="ans" class="txt" lang="${q.digits?'de':LANG.lang2}" ${q.digits?'inputmode="numeric"':''} autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="…" onkeydown="if(event.key==='Enter')lfill()"></div>${q.digits?'':kbdHTML()}
 <div class="actions"><button class="primary" onclick="lfill()">Prüfen</button><button class="ghost" onclick="lgiveup()">Weiß ich nicht</button></div></div>`;
   }else if(q.t==='arr'){
     if(!q.pool){q.pool=shuffle(q.a.split(' ').map((w,i)=>({w:w,i:i})));q.sel=[]}
-    body=`<div class="card q"><div class="label">Bring die Wörter in die richtige Reihenfolge</div><div class="deu" style="font-size:1.3rem">${esc(q.sub)}</div>
+    body=`<div class="card q"><div class="label">${esc(q.lab||'Bring die Wörter in die richtige Reihenfolge')}</div><div class="deu" style="font-size:1.3rem">${esc(q.sub)}</div>
 <div class="ansline">${q.sel.map(k=>`<button class="chip" onclick="arrTap(${k},1)">${esc(q.pool[k].w)}</button>`).join('')}</div>
 <div class="chips">${q.pool.map((c,k)=>`<button class="chip ${q.sel.includes(k)?'used':''}" ${q.sel.includes(k)?'disabled':''} onclick="arrTap(${k},0)">${esc(c.w)}</button>`).join('')}</div>
 <div class="actions"><button class="primary" onclick="larr()" ${q.sel.length===q.pool.length?'':'disabled'}>Prüfen</button><button class="ghost" onclick="lgiveup()">Weiß ich nicht</button></div></div>`;
@@ -4053,8 +4381,9 @@ ${q.hear?hearRow():''}<div style="margin-top:14px"><input id="ans" class="txt" l
 <div>${q.left.map(i=>`<button class="${q.dn.includes(i)?'done':q.sel===i?'sel':''}" ${q.dn.includes(i)?'disabled':''} onclick="matchTap(${i},0)">${esc(q.pairs[i][0])}</button>`).join('')}</div>
 <div>${q.right.map(i=>`<button class="${q.dn.includes(i)?'done':q.bad===i?'bad':''}" ${q.dn.includes(i)?'disabled':''} onclick="matchTap(${i},1)">${esc(q.pairs[i][1])}</button>`).join('')}</div></div></div>`;
   }
+  if(q.pre)body=`<div class="card" style="padding:10px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:center"><button class="play sm" onclick="speak(L.cur.preSay||L.cur.pre)">▶</button><div><div class="meta">💬 ${esc(q.preWho||'')}</div><div style="font-size:1.15rem">${esc(q.pre)}</div><div class="meta">${esc(q.preDe||'')}</div></div></div>`+body;
   $('#app').innerHTML=lshell(body);
-  if(q.auto&&S.settings.autoplay)setTimeout(()=>lsay(),250);
+  if(q.pre&&S.settings.autoplay&&!q.done)setTimeout(()=>speak(q.preSay||q.pre),250);else if(q.auto&&S.settings.autoplay)setTimeout(()=>lsay(),250);
   const a=$('#ans');if(a)setTimeout(()=>{try{a.focus({preventScroll:true})}catch(e){}},60);
 }
 function lpick(i){
@@ -4068,6 +4397,7 @@ function lfill(){
   if(!strip(v)){toast('Bitte erst etwas eingeben.');return}
   q.done=true;$('#ans').disabled=true;
   const sv=strip(v);let ok=sv===strip(q.a),via=false;
+  if(q.digits){const nm=x=>strip(x).replace(/^0+(?=\d)/,'');ok=nm(v)===nm(q.a)}
   if(!ok&&q.alt){ok=q.alt.some(a=>a&&strip(a)===sv);via=ok}
   lfeedback(ok,ok?(via?'Lautschrift erkannt – auf '+LANG.name+': '+q.a:(clean(v)!==clean(q.a)?'Achte auf die Akzente: '+q.a:'')):'');
 }
@@ -4084,24 +4414,24 @@ function matchTap(i,side){
   }else{q.err++;q.bad=i;q.sel=null;beep(false)}
   renderLQ();
 }
-function lsay(slow){const q=L&&L.cur;if(!q||q.t==='match')return;speak((q.say||fullOf(q)).replace(/[;→]/g,''),!!slow)}
+function lsay(slow){const q=L&&L.cur;if(!q||q.t==='match'||q.noSay)return;if(q.dlg&&!slow){playDlg(q.dlg);return}speak((q.say||fullOf(q)).replace(/[;→]/g,''),!!slow)}
 function lfeedback(ok,note){
   const q=L.cur;beep(ok);
   L.n++;
   if(ok){L.ok++;L.combo++;L.bestc=Math.max(L.bestc,L.combo);S.bestCombo=Math.max(S.bestCombo||0,L.combo);if(q.first)L.firstOk++;addXP(L.game?3:5)}
   else{
-    L.combo=0;
+    L.combo=0;(L.wrong=L.wrong||[]);{const f=fullOf(q);if(!L.wrong.some(x=>x.full===f))L.wrong.push({full:f,say:(q.say||f).replace(/[;→]/g,'')})}
     if(L.hearts!=null){L.hearts--;if(L.hearts<=0)L.over=true}
     else if(!L.test){const r=Object.assign({},q,{first:false,done:false,pool:null,left:null,sel:null});if(r.opts)r.opts=shuffle(r.opts);L.Q.splice(Math.min(3,L.Q.length),0,r);L.total++}
   }
-  touchDay();const h=S.hist[today()]||(S.hist[today()]={n:0,ok:0});h.n++;if(ok)h.ok++;
+  touchDay();const h=S.hist[today()]||(S.hist[today()]={n:0,ok:0});h.n++;if(ok)h.ok++;tick(h);
   save();
   const full=fullOf(q);
   if(ok&&q.t!=='match')lsay();
   const title=ok?(L.combo>=3?'🔥 Richtig! '+L.combo+' in Folge':'✅ Richtig!'):(L.over?'💔 Keine Herzen mehr':'❌ Leider falsch');
   const fb=$('#fb');
   fb.innerHTML=`<div class="fb ${ok?'good':'bad'}"><h3>${title}</h3><div class="ans">${esc(full)}</div>${q.sub&&q.t!=='match'?`<div class="note">${esc(q.sub)}</div>`:''}${q.expl?`<div class="note">${esc(q.expl)}</div>`:''}${note?`<div class="note">${esc(note)}</div>`:''}
-<div class="actions">${q.t!=='match'?'<button class="ghost" onclick="lsay()">▶</button>':''}<button class="primary" id="nextbtn" onclick="lnext()">Weiter</button></div></div>`;
+<div class="actions">${q.t!=='match'&&!q.noSay?'<button class="ghost" onclick="lsay()">▶</button>':''}<button class="primary" id="nextbtn" onclick="lnext()">Weiter</button></div></div>`;
   const nb=$('#nextbtn');if(nb)nb.focus();
   if(fb.scrollIntoView)fb.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
@@ -4110,25 +4440,29 @@ function gameDone(o){
   clearTimers();
   const x0=o.xp0!=null?o.xp0:S.xp;
   addXP(o.xp||0);touchDay();
-  GS=Object.assign({gained:S.xp-x0},o);
+  GS=Object.assign({gained:S.xp-x0,wrong:(typeof L!=='undefined'&&L&&L.wrong)||[]},o);
   save();checkBadges();
   if(o.confetti!==false)confetti();
   view='gsummary';render();
 }
 function gsummaryHTML(){
   return topbar()+`<div class="card center summary"><div class="big">${GS.icon}</div><h2>${esc(GS.title)}</h2><p>${GS.lines.map(esc).join('<br>')}<br><b>+${GS.gained} Punkte</b></p>
-<div class="actions">${GS.next?`<button class="primary" onclick="startNode('${GS.next}')">Weiter: ${esc(NODEBY[GS.next].title)}</button>`:''}<button class="${GS.next?'':'primary'}" onclick="${GS.again}">Nochmal</button><button onclick="go('${GS.back||'games'}')">Zurück</button></div></div>`;
+<div class="actions">${GS.next?`<button class="primary" onclick="startNode('${GS.next}')">Weiter: ${esc(NODEBY[GS.next].title)}</button>`:''}<button class="${GS.next?'':'primary'}" onclick="${GS.again}">Nochmal</button><button onclick="go('${GS.back||'games'}')">Zurück</button></div></div>${wrongListHTML(GS.wrong)}`;
 }
 function finishRun(){
   const r=L;
   if(r.path)return pathFinish(r);
+  if(r.role){const acc=r.firstOk/Math.max(1,r.total0),pct=Math.round(acc*100);const prev=S.hi[r.id]||0;if(pct>prev)S.hi[r.id]=pct;save();gameDone({xp0:r.xp0,title:pct>=70?'Gut gesprochen!':'Übung macht den Meister',icon:pct>=90?'💬⭐':'💬',lines:[r.firstOk+' von '+r.total0+' beim ersten Versuch richtig ('+pct+' %)',prev?'Bisher bestes Ergebnis: '+prev+' %':'Tipp: Hör dir das Gespräch vorher im Hörverstehen an.'],xp:pct>=70?15:5,again:r.again,back:r.back,confetti:pct>=90});return}
+  if(r.read){const acc=r.firstOk/Math.max(1,r.total0),pct=Math.round(acc*100);const prev=S.hi[r.id]||0;if(pct>prev)S.hi[r.id]=pct;save();gameDone({xp0:r.xp0,title:pct>=75?'Gut gelesen!':'Lies den Text noch einmal',icon:pct>=100?'📖⭐':'📖',lines:[r.firstOk+' von '+r.total0+' Fragen beim ersten Versuch richtig ('+pct+' %)',prev?'Bisher bestes Ergebnis: '+prev+' %':'Tipp: Schalte beim Lesen die Übersetzung erst ein, wenn du den Satz nicht verstehst.'],xp:pct>=75?15:5,again:r.again,back:r.back,confetti:pct>=100});return}
+  if(r.hear){const acc=r.firstOk/Math.max(1,r.total0),pct=Math.round(acc*100);const prev=S.hi[r.id]||0;if(pct>prev)S.hi[r.id]=pct;save();
+    gameDone({xp0:r.xp0,title:pct>=70?'Gut verstanden!':'Noch einmal hören?',icon:pct>=90?'🎧⭐':'🎧',lines:[r.firstOk+' von '+r.total0+' beim ersten Versuch richtig ('+pct+' %)',prev&&pct>prev?'Besser als bisher ('+prev+' %).':prev?'Bisher bestes Ergebnis: '+prev+' %':'Die Gespräche aller abgeschlossenen Lektionen kannst du hier üben.'],xp:pct>=70?15:5,again:r.again,back:r.back,confetti:pct>=90});return}
   if(r.game){
     const won=!r.over;const prev=S.hi[r.id]||0;const rec=r.ok>prev;if(rec)S.hi[r.id]=r.ok;
     gameDone({xp0:r.xp0,title:won?r.title+' geschafft!':'Keine Herzen mehr',icon:won?r.icon:'💔',lines:[r.ok+' richtig · '+(r.n-r.ok)+' falsch','Beste Serie: '+r.bestc,rec&&r.ok>0?'🏆 Neuer Rekord!':'Rekord: '+(S.hi[r.id]||0)],xp:won?15:0,again:r.again,back:r.back,confetti:won});
   }else{
     const acc=r.firstOk/r.total0;const stars=acc>=.9?3:acc>=.7?2:1;
     const old=S.gram[r.id]||{stars:0,plays:0};
-    S.gram[r.id]={stars:Math.max(old.stars,stars),plays:old.plays+1,done:true};
+    S.gram[r.id]={stars:Math.max(old.stars,stars),plays:old.plays+1,done:true,last:Date.now()};
     gameDone({xp0:r.xp0,title:'Lektion geschafft!',icon:'⭐'.repeat(stars)+'☆'.repeat(3-stars),lines:[r.firstOk+' von '+r.total0+' gleich beim ersten Versuch richtig'],xp:20+(stars===3?10:0),again:r.again,back:r.back});
   }
 }
@@ -4163,8 +4497,16 @@ ${S_.map((x,i)=>`<div class="wrow"><div class="nico" style="font-size:1.1rem;fon
    ['startBlitz()','⚡','Blitz-Quiz','60 Sekunden, so viele Vokabeln wie möglich. Rekord: '+(S.hi.blitz||0)],
    ['startSprint()','🏃',LANG.sprint.title,LANG.sprint.desc+' Rekord: '+(S.hi.sprint||0)],
    ['startConjBlitz()','🔧','Verb-Werkstatt','Setze die richtige Verbform ein. Rekord: '+(S.hi.conj||0)],
-   ['startSatzbau()','🧩','Satzbau','Bring die Wörter in die richtige Reihenfolge. Rekord: '+(S.hi.satz||0)]];
-  return topbar()+`<h2 style="margin:4px 0 10px">Spiele</h2><div class="gametiles">${T.map(t=>`<div class="card unit"><span class="ico">${t[1]}</span><h3>${t[2]}</h3><p>${esc(t[3])}</p><div class="row"><button class="primary" onclick="${t[0]}">Spielen</button></div></div>`).join('')}</div>`;
+   ['startSatzbau()','🧩','Satzbau','Bring die Wörter in die richtige Reihenfolge. Rekord: '+(S.hi.satz||0)],
+   ['startHear()','🎧','Hörverstehen','Ein Gespräch aus einer gelernten Lektion anhören und Fragen dazu beantworten – ohne Text.'],
+   ['startRole()','💬','Rollenspiel','Du übernimmst eine Rolle im Gespräch: Hör den Partner, antworte mit den richtigen Worten.'],
+   ['startClock()','🕒','Uhrzeit','Wie spät ist es? Uhrzeiten hören, lesen und schreiben. Rekord: '+(S.hi.clock||0)],
+   ['startNumbers()','🔢','Zahlen','Zahlen hören, lesen und schreiben – von 0 bis 1000. Rekord: '+(S.hi.numbers||0)],
+   ["go('read')",'📖','Lesen','Kurze Texte auf '+LANG.name+' lesen, anhören und Fragen dazu beantworten.'],
+   ['startHard()','🎯','Schwierige Wörter','Die Wörter, die dir am häufigsten Fehler machen, gezielt wiederholen.']];
+  const SK=new Set(['🎧','💬','📖','🔢','🕒','🎯']);const tile=(t,lab)=>`<div class="card unit"><span class="ico">${t[1]}</span><h3>${t[2]}</h3><p>${esc(t[3])}</p><div class="row"><button class="primary" onclick="${t[0]}">${lab}</button></div></div>`;
+  return topbar()+`<h2 style="margin:4px 0 4px">Üben</h2><p class="meta" style="margin:0 0 10px">Hören, Sprechen, Lesen, Zahlen und Uhrzeit – ergänzend zum Lernpfad.</p><div class="gametiles">${T.filter(t=>SK.has(t[1])).map(t=>tile(t,'Starten')).join('')}</div>
+<h2 style="margin:18px 0 4px">Spiele</h2><p class="meta" style="margin:0 0 10px">Kurz und mit Herzen – gut für zwischendurch.</p><div class="gametiles">${T.filter(t=>!SK.has(t[1])).map(t=>tile(t,'Spielen')).join('')}</div>`;
 }
 
 /* ---------- Spiele mit Herzen (nutzen den Runner) ---------- */
@@ -4242,7 +4584,9 @@ function endBlitz(){
 }
 
 cloudInit();
+try{if(typeof navigator!=='undefined'&&'serviceWorker' in navigator&&/^https?:/.test(location.protocol)&&location.hostname!=='app.test'){navigator.serviceWorker.register('sw.js').catch(()=>{})}}catch(e){}
 if(window.addEventListener)window.addEventListener('beforeunload',e=>{if(CLOUD.t){e.preventDefault();e.returnValue=''}});
+document.addEventListener('keydown',e=>{if(/^[1-9]$/.test(e.key)&&(view==='lesson'||view==='session')&&document.activeElement.tagName!=='INPUT'){const bs=[...document.querySelectorAll('.opt:not([disabled])')];const b=bs[+e.key-1];if(b){e.preventDefault();b.click();return}}if(e.key==='Enter'&&view==='session'&&cur&&cur.answered&&document.activeElement.tagName!=='BUTTON'){const nb=document.getElementById('nextbtn');if(nb){e.preventDefault();nb.click();return}}});
 
 /* ============================================================
    LERNPFAD – Engine
@@ -4434,6 +4778,7 @@ function genLesson(l){
   shuffle(W).slice(0,3).forEach(w=>qs.push(qLis(w)));
   shuffle(W).slice(0,3).forEach(w=>qs.push(qDG(w)));
   shuffle(W.filter(typeOK)).slice(0,2).forEach(w=>qs.push(qType(w)));
+  qGaps(l,2).forEach(q=>qs.push(q));
   shuffle(l.D).slice(0,2).forEach(d=>qs.push(qLine(d,l.D,true)));
   shuffle(l.D).slice(0,1).forEach(d=>qs.push(qLine(d,l.D,false)));
   shuffle(l.D.concat(l.S).filter(s=>nTok(s.gr)>=3&&nTok(s.gr)<=8)).slice(0,3).forEach(s=>qs.push(qArr(s)));
@@ -4584,6 +4929,8 @@ function nodeCard(n){
   let extra='';
   if(n.type==='test'&&!r.done&&r.plays>=3&&st!=='lock')extra=`<button class="ghost" onclick="skipTest('${n.id}')">Überspringen</button>`;
   if(n.W&&st==='done')extra=`<button class="ghost" onclick="go('list','${n.id}')">Wörter</button>`;
+  if(n.D&&n.D.length>=3&&new Set(n.D.map(d=>d.sp)).size>=2&&st==='done')extra+=`<button class="ghost" onclick="go('role','${n.id}')" title="Rollenspiel${S.hi['role_'+n.id]?' · bisher '+S.hi['role_'+n.id]+' %':''}">💬</button>`;
+  if(n.D&&n.D.length>=3&&st==='done')extra+=`<button class="ghost" onclick="startHear('${n.id}')" title="Hörverstehen${S.hi['hear_'+n.id]?' · bisher '+S.hi['hear_'+n.id]+' %':''}">🎧${S.hi['hear_'+n.id]?' '+S.hi['hear_'+n.id]+' %':''}</button>`;
   const gr=n.W&&st==='done'?GRAM.filter(g=>g.after===n.id):[];
   gr.forEach(g=>{extra+=`<button class="ghost" onclick="startLesson('${g.id}')" title="${esc(g.title)}">📘 Grammatik</button>`});
   const sub=n.type==='test'?(r.plays?'Bester Versuch: '+r.best+' %':'Mindestens 70 % nötig'):esc(n.goal||'');
