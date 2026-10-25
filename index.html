@@ -204,6 +204,7 @@ td small{color:var(--muted)}
   --blue:#0d5eaf;--blue2:#1f7ae0;--soft:#e6f0fc;--good:#1b9e5a;--goodbg:#e4f7ec;--bad:#d64045;--badbg:#fdeaea;--gold:#f0a500;
   --shadow:0 2px 10px rgba(20,33,61,.08);
 }}
+.ubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.ubtile{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow);font:inherit}.ubtile span{font-size:1.6rem}.ubtile b{font-size:.92rem}.ubtile small{color:var(--muted);font-size:.72rem;text-align:center}@media(min-width:600px){.ubgrid{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
@@ -3851,7 +3852,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-25.2';
+const APP_VERSION='2026-10-25.3';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4160,6 +4161,24 @@ function helpHTML(){
 <h3>6. Serie und Tagesziel</h3><p>Die Serie zählt Tage, an denen du das Tagesziel erreicht hast (einstellbar in den Einstellungen). Ein kleines Ziel, das du jeden Tag schaffst, bringt mehr als ein großes, das du nach drei Tagen aufgibst.</p>
 <h3>Tipps am PC</h3><p>Antworten mit den Tasten 1–4 wählen, Enter für „Weiter“. Im Diktat und bei Schreibaufgaben erscheint eine Bildschirmtastatur für Sonderzeichen.</p></div>`;
 }
+function tipsHTML(){
+  if(DEMO)return '';const rows=[];
+  const w=weakLessons();if(w.length){const n=w[w.length-1];rows.push(['💪','Lektion mit nur einem Stern: '+n.title,`startNode('${n.id}',true)`,'Nochmal'])}
+  const hd=hardItems().length;if(hd>=3)rows.push(['🎯',hd+' schwierige Wörter – kurze Extrarunde','startHard()','Üben']);
+  const gd=gramDue();if(gd.length)rows.push(['📘','Grammatik auffrischen: '+gd[0].title,`startLesson('${gd[0].id}',true)`,'Üben']);
+  if(!rows.length)return '';
+  return `<div class="card" style="padding:10px 14px"><h3 style="margin:0 0 4px">Empfehlungen für dich</h3>${rows.map(r=>`<div class="wrow" style="padding:7px 0"><span style="font-size:1.3rem">${r[0]}</span><div class="wt" style="flex:1"><div>${esc(r[1])}</div></div><button onclick="${r[2]}">${r[3]}</button></div>`).join('')}</div>`;
+}
+function ubenHTML(){
+  const hp=hearPool(),rp=rolePool(),rd=READS().filter(readOpen),vn=vocabItems().length;
+  const t=[];
+  if(vn)t.push(['📚','Wortschatz',vn+' Wörter',"go('vocab')"]);
+  if(hp.length)t.push(['🎧','Hören',hp.length+' Gespräche',`startHear('${hp[hp.length-1].id}')`]);
+  if(rp.length)t.push(['💬','Sprechen','Rollenspiel',`go('role','${rp[rp.length-1].id}')`]);
+  if(rd.length){const nx=rd.find(r=>!S.hi['read_'+r.id])||rd[rd.length-1];t.push(['📖','Lesen',rd.length+' von '+READS().length+' Texten',`go('readtext','${nx.id}')`])}
+  t.push(['🗣️','Sprachführer','Sätze nachschlagen',"go('phrases')"]);t.push(['🎮','Mehr','Zahlen, Uhrzeit, Spiele',"go('games')"]);
+  return `<h2 style="margin:10px 0 4px">Üben</h2><div class="ubgrid">${t.map(x=>`<button class="ubtile" onclick="${x[3]}"><span>${x[0]}</span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>`;
+}
 function go(v,arg){if(v!=='vocab')VPLAY=null;stopSpeech();document.querySelectorAll('.confetti').forEach(e=>e.remove());clearTimers();view=v;viewArg=arg;render()}
 function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.11</small></div>
 <div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
@@ -4180,9 +4199,8 @@ function homeHTML(){
   <div class="stat"><b>${h.n}/${goal}</b><small>Antworten heute</small></div>
 </div>
 <div class="card lvl"><div class="lv">${lvl()}</div><div style="flex:1"><b>${esc(levelTitle())}</b><div class="bar" style="margin:6px 0"><i style="width:${S.xp%100}%"></i></div><small class="meta">${S.xp%100}/100 Punkte bis Level ${lvl()+1}</small></div></div>
-${DEMO?demoCardHTML():''}${continueCardHTML()}${weakCardHTML()}${hardCardHTML()}${gramRefreshCardHTML()}${hearCardHTML()}${readCardHTML()}${vocabItems().length?`<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">📚</div><div style="flex:1"><h3 style="margin:0">Mein Wortschatz</h3><p class="meta" style="margin:2px 0 0">${vocabItems().length} Wörter gelernt – ansehen, anhören, gezielt üben</p></div><button class="primary" onclick="go('vocab')">Öffnen</button></div>`:''}
-<div class="daily"><div><h2>Tägliche Wiederholung</h2><p>${due?due+' Vokabeln sind zur Wiederholung fällig':'Heute ist nichts fällig. Weiter mit dem Lernpfad!'}</p></div>
-<div style="display:flex;flex-direction:column;gap:6px"><button onclick="${due?'startSession()':"go('path')"}">${due?'Üben':'Lernpfad'}</button>${due?`<button onclick="startCards(vocabItems().filter(i=>S.items[i.id].due<=Date.now()),'Fällige Karten')">🃏 Karten</button>`:''}</div></div>
+${DEMO?demoCardHTML():''}${due?`<div class="daily"><div><h2>Tägliche Wiederholung</h2><p>${due} Vokabeln sind zur Wiederholung fällig</p></div>
+<div style="display:flex;flex-direction:column;gap:6px"><button onclick="startSession()">Üben</button><button onclick="startCards(vocabItems().filter(i=>S.items[i.id].due<=Date.now()),'Fällige Karten')">🃏 Karten</button></div></div>`:''}${continueCardHTML()}${tipsHTML()}${ubenHTML()}
 ${S.settings.speak?`<div class="card" style="display:flex;align-items:center;gap:14px"><div style="font-size:2rem">🎤</div><div style="flex:1"><h3>Aussprache üben</h3><p class="meta" style="margin:2px 0 0">Hör zu, sprich nach – die App zeigt dir, wie gut es klang.</p></div><button class="primary" onclick="startPron()">Los</button></div>`:''}
 ${UNITS.length?`<h2 style="margin:6px 0 4px">Wortschatz-Listen</h2><p class="meta" style="margin:0 0 10px">Zusätzlicher Wortschatz zum freien Üben, unabhängig vom Lernpfad.</p>`:''}
 <div class="units">${UNITS.map(u=>{const p=unitProgress(u);return `
