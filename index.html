@@ -3724,13 +3724,13 @@ function render(){
   if(NAVV.includes(view)){app.insertAdjacentHTML('beforeend',navHTML());window.scrollTo(0,0)}
 }
 function chooseHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.20</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.21</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
 <h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 4px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>${lastLine()}
 <div class="units">${LANGS.map(l=>`<div class="card unit" ${l.id===LANGID?'style="border:2px solid var(--blue2)"':''}><span class="ico">${l.flag}</span><h3>${esc(l.name)}</h3><p>${esc(l.native)} · ${esc(l.desc)}</p><div class="row"><button class="primary" onclick="setLang('${l.id}')">${l.id===LANGID?'Weiter':'Lernen'}</button></div></div>`).join('')}</div>`;
 }
 function setLang(id){try{localStorage.setItem('sprachen_lernen_lang_'+USER,id)}catch(e){}if(CLOUD.on&&CLOUD.user&&!DEMO){CLOUD.db.doc('users/'+USER).set({lang:id,name:USER},{merge:true}).catch(()=>{})}if(CLOUD.t){clearTimeout(CLOUD.t);cloudPush()}if(id===LANGID){go('home');return}location.reload()}
 function loginHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.20</small></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.21</small></div></div>
 <div class="card" style="max-width:420px;margin:20px auto"><h2 style="margin-top:0">Anmelden</h2><p class="meta">Wer lernt heute? Jeder hat seinen eigenen Fortschritt.${CLOUD.on?' <br>☁️ Dein Fortschritt wird online gesichert und ist auf allen Geräten verfügbar.':''}</p>
 <div class="opts" style="grid-template-columns:1fr 1fr">${USERS.map(u=>`<button class="opt" id="u_${u}" onclick="pickUser('${u}')">${esc(u)}</button>`).join('')}</div>
 <div style="margin-top:14px"><input id="pw" class="txt" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -3855,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-26.4';
+const APP_VERSION='2026-10-26.5';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4274,7 +4274,7 @@ ${sel('podDir',[['mix','Gemischt (60 % Deutsch → '+esc(LANG.name)+')'],['de','
 <p class="meta">Die Folge wird jedes Mal neu aus deinem Lernstand gebaut: fällige und schwierige Wörter zuerst, dann die letzten Lektionen. Gesprochen mit der Stimme deines Geräts.</p>`:
   `<p>Noch keine Wörter gelernt. Schließe zuerst eine Lektion im Lernpfad ab.</p>`}</div>
 ${!POD.live&&sc?`<div class="card"><h3 style="margin-top:0">🎙️ Als Podcast-Datei (MP3)</h3><p class="meta" style="margin:0 0 8px">Erzeugt dieselbe Folge mit natürlichen Google-Stimmen als Datei. Die Datei spielt überall: Musik-App, Podcast-App, Android Auto, ohne dass das Programm offen sein muss. Das Erzeugen dauert ein paar Minuten und braucht Internet.</p>
-<div class="field"><label>Gemini-Schlüssel<small>${gem?'Eingetragen · nur auf diesem Gerät gespeichert':'Aus Google AI Studio (kostenloses Projekt) – wird nur auf diesem Gerät gespeichert'}</small></label><div style="display:flex;gap:6px"><input id="gemkey" class="txt" style="font-size:.9rem;padding:8px;text-align:left;max-width:220px" type="password" placeholder="${gem?'••••••••':'Schlüssel einfügen'}" autocomplete="off"><button onclick="gemKeySet(document.getElementById('gemkey').value)">Speichern</button>${gem?`<button class="ghost" onclick="gemKeySet('')">✕</button>`:''}</div></div>
+<div class="field"><label>Google-Schlüssel<small>${gem?(isCloudKey()?'Cloud Text-to-Speech · nur auf diesem Gerät gespeichert':'Gemini-Schlüssel (knappes Kontingent) · nur auf diesem Gerät'):'Google-Cloud-Schlüssel (Text-to-Speech) – wird nur auf diesem Gerät gespeichert'}</small></label><div style="display:flex;gap:6px"><input id="gemkey" class="txt" style="font-size:.9rem;padding:8px;text-align:left;max-width:220px" type="password" placeholder="${gem?'••••••••':'Schlüssel einfügen'}" autocomplete="off"><button onclick="gemKeySet(document.getElementById('gemkey').value)">Speichern</button>${gem?`<button class="ghost" onclick="gemKeySet('')">✕</button>`:''}</div></div>
 ${gem?`<div id="podgen">${POD.gen?`<div class="meta">${esc(POD.gen)}</div><div class="podbar"><i style="width:${POD.genPct||0}%"></i></div>`:`<div class="actions" style="justify-content:flex-start"><button class="primary" onclick="podExport()">🎙️ Datei erzeugen</button><button onclick="podTestKey()">Verbindung testen</button></div>`}</div>
 <div id="podfile">${podFileHTML()}</div>`:`<p class="meta">Ohne Schlüssel läuft nur die Live-Wiedergabe oben. Den Schlüssel bekommt ihr von Till.</p>`}</div>`:''}`;
 }
@@ -4305,7 +4305,8 @@ async function gemTTS(text,voice){
   }
   throw new Error(lastErr||'Sprachausgabe nicht erreichbar');
 }
-async function podTestKey(){POD.gen='Teste Verbindung …';podGenPaint();let info='';try{const tts=await gemModels();info=tts.length?'Sprach-Modelle: '+tts.join(', '):'Kein Sprach-Modell in der Liste ('+(GEM.all||[]).length+' Modelle gesamt)';POD.gen='Erzeuge Testsatz … '+info;podGenPaint();const a=await gemTTS('Hallo! Die Verbindung funktioniert.',GEM.voiceDe);POD.gen='';render();toast('✅ Verbindung ok: '+GEM.model+', '+(a.pcm.length/a.rate).toFixed(1)+' s Audio');podPlayPcm(a.pcm,a.rate)}catch(e){POD.gen='';render();const d=document.createElement('div');d.className='card';d.innerHTML='<b>❌ '+esc(e.message)+'</b><div class="meta" style="margin-top:6px">'+esc(info)+(GEM.lastRaw?'<br>Antwort: '+esc(GEM.lastRaw):'')+'</div><p class="meta">Bitte diesen Text an Till weitergeben.</p>';const el=document.getElementById('podgen');if(el)el.parentNode.insertBefore(d,el)}}
+async function podTestKey(){POD.gen='Teste Verbindung …';podGenPaint();let info='';if(isCloudKey()){try{const v=await cttsVoice('de-DE'),vt=await cttsVoice(LANG.tts);const seg=await cttsSynth(['Hallo! Die Verbindung funktioniert.'],'de-DE',1);POD.gen='';render();toast('✅ Cloud Text-to-Speech ok · Stimmen: '+v+' / '+vt);podPlayPcm(seg[0],24000)}catch(e){POD.gen='';render();toast('❌ '+e.message)}return}
+try{const tts=await gemModels();info=tts.length?'Sprach-Modelle: '+tts.join(', '):'Kein Sprach-Modell in der Liste ('+(GEM.all||[]).length+' Modelle gesamt)';POD.gen='Erzeuge Testsatz … '+info;podGenPaint();const a=await gemTTS('Hallo! Die Verbindung funktioniert.',GEM.voiceDe);POD.gen='';render();toast('✅ Verbindung ok: '+GEM.model+', '+(a.pcm.length/a.rate).toFixed(1)+' s Audio');podPlayPcm(a.pcm,a.rate)}catch(e){POD.gen='';render();const d=document.createElement('div');d.className='card';d.innerHTML='<b>❌ '+esc(e.message)+'</b><div class="meta" style="margin-top:6px">'+esc(info)+(GEM.lastRaw?'<br>Antwort: '+esc(GEM.lastRaw):'')+'</div><p class="meta">Bitte diesen Text an Till weitergeben.</p>';const el=document.getElementById('podgen');if(el)el.parentNode.insertBefore(d,el)}}
 function podPlayPcm(pcm,rate){try{const a=new Audio(URL.createObjectURL(new Blob([pcmToWav(pcm,rate)],{type:'audio/wav'})));a.play()}catch(e){}}
 function pcmToWav(pcm,rate){const n=pcm.length,b=new ArrayBuffer(44+n*2),d=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,rate,true);d.setUint32(28,rate*2,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);new Int16Array(b,44).set(pcm);return b}
 function splitSilence(pcm,rate,expect){
@@ -4321,6 +4322,7 @@ function splitSilence(pcm,rate,expect){
 function podGenPaint(){const el=document.getElementById('podgen');if(el)el.innerHTML=POD.gen?`<div class="meta">${esc(POD.gen)}</div><div class="podbar"><i style="width:${POD.genPct||0}%"></i></div>`:`<div class="actions" style="justify-content:flex-start"><button class="primary" onclick="podExport()">🎙️ Datei erzeugen</button><button onclick="podTestKey()">Verbindung testen</button></div>`}
 async function podExport(){
   const sc=podScript();if(!sc){toast('Keine Wörter zum Üben.');return}
+  if(isCloudKey()){try{POD.genPct=0;const r=await podExportCloud(sc);await podFinish(r.out,r.rate,r.chars)}catch(e){POD.gen='';POD.genPct=0;render();toast('❌ Erzeugen fehlgeschlagen: '+e.message)}return}
   const steps=sc.steps.filter(s=>s.t!=='mark');
   try{if(!GEM.model)await gemModels()}catch(e){}
   // Je Sprache alle verschiedenen Texte sammeln und in Paketen von 10 anfragen (Wiederholungen nur einmal erzeugen)
@@ -4338,6 +4340,7 @@ async function podExport(){
       else{POD.gen='Trennung unklar ('+segs.length+' statt '+j.items.length+') – frage einzeln …';podGenPaint();for(const x of j.items){await new Promise(r=>setTimeout(r,GAP*1000));const b=await gemTTS(x.t,voice);audio[j.lang][x.i]=b.pcm}}
     }
     const get=s=>audio[s.lang][key[s.lang+'|'+s.text]];
+    await podFinish(null,rate,0,steps,get);return;
     POD.gen='Setze die Folge zusammen …';POD.genPct=92;podGenPaint();
     let total=0;steps.forEach(s=>{total+=s.t==='pause'?Math.round(s.s*rate):(get(s)?get(s).length:0)});
     const out=new Int16Array(total);let p=0;steps.forEach(s=>{if(s.t==='pause'){p+=Math.round(s.s*rate)}else{const a=get(s);if(a){out.set(a,p);p+=a.length}}});
@@ -4357,8 +4360,65 @@ async function podFileSave(blob,name,mins){const db=await podDB();await new Prom
 async function podFileLoad(){try{const db=await podDB();const f=await new Promise((res,rej)=>{const r=db.transaction('files').objectStore('files').get((USER||'')+'_'+LANG.id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});if(f&&f.blob){POD.file={name:f.name,url:URL.createObjectURL(f.blob),size:f.blob.size,mins:f.mins,blob:f.blob};if(view==='podcast')render()}}catch(e){}}
 async function podFileDelete(){POD.file=null;try{const db=await podDB();db.transaction('files','readwrite').objectStore('files').delete((USER||'')+'_'+LANG.id)}catch(e){}render()}
 if(typeof indexedDB!=='undefined'&&USER)setTimeout(podFileLoad,500);
+const CTTS={voices:{}};
+const isCloudKey=()=>/^AIza/.test(gemKey());
+const xmlEsc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+async function cttsVoice(code){
+  if(CTTS.voices[code])return CTTS.voices[code];
+  const r=await fetch('https://texttospeech.googleapis.com/v1/voices?languageCode='+code,{headers:{'x-goog-api-key':gemKey()}});
+  if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}throw new Error('Stimmenliste HTTP '+r.status+(t?': '+t:''))}
+  const vs=((await r.json()).voices||[]).filter(v=>!/chirp|journey|studio|polyglot/i.test(v.name)&&((v.languageCodes||[]).some(c=>c.toLowerCase()===code.toLowerCase())||v.name.toLowerCase().startsWith(code.toLowerCase())));
+  const rank=v=>(/neural2/i.test(v.name)?3:/wavenet/i.test(v.name)?2:/standard/i.test(v.name)?1:0)*10+(v.ssmlGender==='FEMALE'?1:0);
+  vs.sort((a,b)=>rank(b)-rank(a));if(!vs.length)throw new Error('Keine Stimme für '+code);
+  CTTS.voices[code]=vs[0].name;return vs[0].name;
+}
+async function cttsSynth(texts,code,rate){
+  // texts: Liste; Rückgabe: Liste von Int16Array-Segmenten (ein Segment je Text), per SSML-Marken getrennt
+  const voice=await cttsVoice(code);const out=new Array(texts.length);
+  let chunks=[],cur=[],size=0;texts.forEach((t,i)=>{const n=t.length+40;if(size+n>4200&&cur.length){chunks.push(cur);cur=[];size=0}cur.push(i);size+=n});if(cur.length)chunks.push(cur);
+  for(const ch of chunks){
+    const ssml='<speak>'+ch.map(i=>'<mark name="m'+i+'"/>'+xmlEsc(texts[i])+'<break time="400ms"/>').join('')+'<mark name="end"/></speak>';
+    for(let tries=0;tries<4;tries++){
+      const r=await fetch('https://texttospeech.googleapis.com/v1beta1/text:synthesize',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':gemKey()},body:JSON.stringify({input:{ssml:ssml},voice:{languageCode:code,name:voice},audioConfig:{audioEncoding:'LINEAR16',sampleRateHertz:24000,speakingRate:rate||1},enableTimePointing:['SSML_MARK']})});
+      if(r.status===429){await new Promise(x=>setTimeout(x,5000*(tries+1)));continue}
+      if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}throw new Error('Text-to-Speech HTTP '+r.status+(t?': '+t:''))}
+      const j=await r.json();const bin=atob(j.audioContent);const u8=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u8[i]=bin.charCodeAt(i);
+      const hdr=(u8[0]===82&&u8[1]===73)?44:0;const pcm=new Int16Array(u8.buffer,hdr,(u8.length-hdr)>>1);
+      const tp={};(j.timepoints||[]).forEach(t=>tp[t.markName]=t.timeSeconds);
+      ch.forEach((i,q)=>{const a=tp['m'+i],b=q+1<ch.length?tp['m'+ch[q+1]]:tp['end'];if(a==null||b==null){out[i]=null;return}let s=Math.round(a*24000),e=Math.round(b*24000)-Math.round(0.36*24000);if(e<=s)e=Math.round(b*24000);out[i]=pcm.slice(Math.max(0,s),Math.min(pcm.length,e))});
+      break;
+    }
+    if(ch.some(i=>!out[i]))throw new Error('Zeitmarken fehlen in der Antwort');
+  }
+  return out;
+}
+async function podExportCloud(sc){
+  const steps=sc.steps.filter(s=>s.t!=='mark');const rate=24000;
+  const uniq={de:[],tl:[]};const key={};steps.forEach(s=>{if(s.t!=='say')return;const k=s.lang+'|'+s.text;if(!(k in key)){key[k]=uniq[s.lang].length;uniq[s.lang].push(s.text)}});
+  POD.gen='Erzeuge deutsche Ansagen …';POD.genPct=10;podGenPaint();
+  const de=await cttsSynth(uniq.de,'de-DE',1.0);
+  POD.gen='Erzeuge '+LANG.name+' …';POD.genPct=55;podGenPaint();
+  const tl=await cttsSynth(uniq.tl,LANG.tts,Math.min(1,Math.max(0.8,S.settings.rate)));
+  const audio={de:de,tl:tl};const get=s=>audio[s.lang][key[s.lang+'|'+s.text]];
+  let total=0;steps.forEach(s=>{total+=s.t==='pause'?Math.round(s.s*rate):(get(s)?get(s).length:0)});
+  const out=new Int16Array(total);let p=0;steps.forEach(s=>{if(s.t==='pause'){p+=Math.round(s.s*rate)}else{const a=get(s);if(a){out.set(a,p);p+=a.length}}});
+  return {out:out,rate:rate,chars:uniq.de.join('').length+uniq.tl.join('').length};
+}
+async function podFinish(out,rate,chars,steps,get){
+  POD.gen='Setze die Folge zusammen …';POD.genPct=92;podGenPaint();
+  if(!out){let total=0;steps.forEach(s=>{total+=s.t==='pause'?Math.round(s.s*rate):(get(s)?get(s).length:0)});out=new Int16Array(total);let p=0;steps.forEach(s=>{if(s.t==='pause'){p+=Math.round(s.s*rate)}else{const a=get(s);if(a){out.set(a,p);p+=a.length}}})}
+  let blob,name;const date=today();
+  try{if(!window.lamejs){await loadScript('https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js')}
+    POD.gen='Kodiere MP3 …';POD.genPct=96;podGenPaint();await new Promise(r=>setTimeout(r,30));
+    const enc=new lamejs.Mp3Encoder(1,rate,64),parts=[];for(let i=0;i<out.length;i+=1152*8){const c=enc.encodeBuffer(out.subarray(i,i+1152*8));if(c.length)parts.push(c)}const end=enc.flush();if(end.length)parts.push(end);
+    blob=new Blob(parts,{type:'audio/mpeg'});name='sprachen-'+LANG.id+'-'+(USER||'').toLowerCase()+'-'+date+'.mp3';
+  }catch(e){blob=new Blob([pcmToWav(out,rate)],{type:'audio/wav'});name='sprachen-'+LANG.id+'-'+(USER||'').toLowerCase()+'-'+date+'.wav'}
+  POD.file={name:name,url:URL.createObjectURL(blob),size:blob.size,mins:Math.round(out.length/rate/60),blob:blob};
+  try{await podFileSave(blob,name,Math.round(out.length/rate/60))}catch(e){}
+  POD.gen='';POD.genPct=0;render();toast('🎧 Folge fertig: '+name+(chars?' · '+chars+' Zeichen':''));
+}
 function go(v,arg){if(v!=='vocab')VPLAY=null;if(v!=='podcast'&&typeof podStop==='function'&&POD.live)podStop(true);stopSpeech();document.querySelectorAll('.confetti').forEach(e=>e.remove());clearTimers();view=v;viewArg=arg;render()}
-function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.20</small></div>
+function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.21</small></div>
 <div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
 function unitProgress(u){
   const ids=ALL.filter(i=>i.unit===u.id);
@@ -4450,7 +4510,7 @@ ${CLOUD.on&&!DEMO?`<p class="meta">☁️ Dein Fortschritt wird automatisch onli
 <div class="field"><label>Alles exportieren<small>Alle Sprachen von ${esc(USER||'')} als Datei – Notfallkopie</small></label><button onclick="exportAll()">⬇ Datei</button></div>
 <div class="field"><label>Aus Datei wiederherstellen<small>Sicherungsdatei einlesen (alle Sprachen oder eine)</small></label><button onclick="$('#imp').click()">⬆ Datei</button></div>
 <div class="field"><label>Diese Sprache zurücksetzen<small>Löscht den Fortschritt in ${esc(LANG.name)}</small></label><button class="ghost" onclick="resetData()">Zurücksetzen</button></div>
-<p class="meta" style="margin-top:10px">Version 1.20 · Build ${APP_VERSION}</p>
+<p class="meta" style="margin-top:10px">Version 1.21 · Build ${APP_VERSION}</p>
 <input id="imp" type="file" accept=".json" hidden onchange="importData(this.files[0])"></div>`;
 }
 function exportData(){const b=new Blob([JSON.stringify(S)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(USER||'gast').toLowerCase()+'-'+LANG.exportName;a.click()}
