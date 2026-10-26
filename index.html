@@ -3855,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-26.2';
+const APP_VERSION='2026-10-26.3';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4281,22 +4281,31 @@ ${gem?`<div id="podgen">${POD.gen?`<div class="meta">${esc(POD.gen)}</div><div c
 function podFileHTML(){const f=POD.file;if(!f)return '';return `<div class="wrow"><span style="font-size:1.5rem">🎧</span><div class="wt"><b>${esc(f.name)}</b><div class="wd">${f.mins} Min · ${(f.size/1048576).toFixed(1)} MB</div></div></div><audio controls style="width:100%;margin:6px 0" src="${f.url}"></audio><div class="vtools"><a class="btnlike" download="${esc(f.name)}" href="${f.url}"><button>⬇ Herunterladen</button></a><button class="ghost" onclick="podFileDelete()">Löschen</button></div><p class="meta">Zum Autoradio: Datei herunterladen, dann in der Musik-App des Handys abspielen (Ordner „Downloads“), oder per Bluetooth direkt aus dieser Seite starten.</p>`}
 /* ---------- Podcast-Datei über Gemini ---------- */
 const GEM={models:['gemini-2.5-flash-preview-tts','gemini-2.5-flash-tts','gemini-2.5-pro-preview-tts'],voiceDe:'Kore',voiceTl:'Puck'};
+async function gemModels(){
+  const key=gemKey();const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200',{headers:{'x-goog-api-key':key}});
+  if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}throw new Error('Modellliste HTTP '+r.status+(t?': '+t:''))}
+  const j=await r.json();const all=(j.models||[]).map(m=>(m.name||'').replace(/^models\//,''));
+  const tts=all.filter(n=>/tts/i.test(n)).sort((a,b)=>(/flash/.test(b)?1:0)-(/flash/.test(a)?1:0)||(/preview/.test(a)?1:0)-(/preview/.test(b)?1:0));
+  GEM.all=all;if(tts.length)GEM.models=tts;return tts;
+}
 async function gemTTS(text,voice){
   const key=gemKey();if(!key)throw new Error('Kein Gemini-Schlüssel eingetragen');let lastErr='';
-  for(const m of ((window.GEMINI_CONFIG&&window.GEMINI_CONFIG.model)?[window.GEMINI_CONFIG.model]:GEM.models)){
+  const list=(window.GEMINI_CONFIG&&window.GEMINI_CONFIG.model)?[window.GEMINI_CONFIG.model]:(GEM.model?[GEM.model].concat(GEM.models.filter(m=>m!==GEM.model)):GEM.models);
+  for(const m of list){
     for(let tries=0;tries<6;tries++){
       const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:voice}}}}})});
       if(r.status===429){const wait=15000*(tries+1);POD.gen='Kontingent kurz erschöpft – warte '+Math.round(wait/1000)+' s …';podGenPaint();await new Promise(x=>setTimeout(x,wait));continue}
       if(r.status===404){lastErr='Modell '+m+' nicht gefunden';break}
-      if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}throw new Error('HTTP '+r.status+(t?': '+t:''))}
-      const j=await r.json();const part=(((j.candidates||[])[0]||{}).content||{}).parts||[];const p=part.find(x=>x.inlineData);if(!p)throw new Error('Keine Audiodaten in der Antwort');
+      if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}lastErr='HTTP '+r.status+(t?': '+t:'')+' ('+m+')';if(r.status===400&&/modalit|audio|not support/i.test(t))break;throw new Error(lastErr)}
+      const j=await r.json();const cand=(j.candidates||[])[0]||{};const parts=(cand.content||{}).parts||[];const p=parts.find(x=>x.inlineData&&/audio/i.test(x.inlineData.mimeType||''));
+      if(!p){const txt=parts.filter(x=>x.text).map(x=>x.text).join(' ').slice(0,120);lastErr='Keine Audiodaten ('+m+(cand.finishReason?', '+cand.finishReason:'')+(j.promptFeedback&&j.promptFeedback.blockReason?', '+j.promptFeedback.blockReason:'')+(txt?', Text: „'+txt+'“':'')+')';GEM.lastRaw=JSON.stringify(j).slice(0,400);break}
       const mime=p.inlineData.mimeType||'';const rate=+(mime.match(/rate=(\d+)/)||[])[1]||24000;const bin=atob(p.inlineData.data);const pcm=new Int16Array(bin.length>>1);for(let i=0;i<pcm.length;i++)pcm[i]=(bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8))<<16>>16;
       GEM.model=m;return {pcm:pcm,rate:rate};
     }
   }
   throw new Error(lastErr||'Sprachausgabe nicht erreichbar');
 }
-async function podTestKey(){POD.gen='Teste Verbindung …';podGenPaint();try{const a=await gemTTS('Hallo! Die Verbindung funktioniert.',GEM.voiceDe);POD.gen='';render();toast('✅ Verbindung ok ('+GEM.model+', '+(a.pcm.length/a.rate).toFixed(1)+' s Audio)');podPlayPcm(a.pcm,a.rate)}catch(e){POD.gen='';render();toast('❌ '+e.message)}}
+async function podTestKey(){POD.gen='Teste Verbindung …';podGenPaint();let info='';try{const tts=await gemModels();info=tts.length?'Sprach-Modelle: '+tts.join(', '):'Kein Sprach-Modell in der Liste ('+(GEM.all||[]).length+' Modelle gesamt)';POD.gen='Erzeuge Testsatz … '+info;podGenPaint();const a=await gemTTS('Hallo! Die Verbindung funktioniert.',GEM.voiceDe);POD.gen='';render();toast('✅ Verbindung ok: '+GEM.model+', '+(a.pcm.length/a.rate).toFixed(1)+' s Audio');podPlayPcm(a.pcm,a.rate)}catch(e){POD.gen='';render();const d=document.createElement('div');d.className='card';d.innerHTML='<b>❌ '+esc(e.message)+'</b><div class="meta" style="margin-top:6px">'+esc(info)+(GEM.lastRaw?'<br>Antwort: '+esc(GEM.lastRaw):'')+'</div><p class="meta">Bitte diesen Text an Till weitergeben.</p>';const el=document.getElementById('podgen');if(el)el.parentNode.insertBefore(d,el)}}
 function podPlayPcm(pcm,rate){try{const a=new Audio(URL.createObjectURL(new Blob([pcmToWav(pcm,rate)],{type:'audio/wav'})));a.play()}catch(e){}}
 function pcmToWav(pcm,rate){const n=pcm.length,b=new ArrayBuffer(44+n*2),d=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,rate,true);d.setUint32(28,rate*2,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);new Int16Array(b,44).set(pcm);return b}
 function splitSilence(pcm,rate,expect){
@@ -4313,6 +4322,7 @@ function podGenPaint(){const el=document.getElementById('podgen');if(el)el.inner
 async function podExport(){
   const sc=podScript();if(!sc){toast('Keine Wörter zum Üben.');return}
   const steps=sc.steps.filter(s=>s.t!=='mark');
+  try{if(!GEM.model)await gemModels()}catch(e){}
   // Je Sprache alle verschiedenen Texte sammeln und in Paketen von 10 anfragen (Wiederholungen nur einmal erzeugen)
   const uniq={de:[],tl:[]};const key={};steps.forEach(s=>{if(s.t!=='say')return;const k=s.lang+'|'+s.text;if(!(k in key)){key[k]=uniq[s.lang].length;uniq[s.lang].push(s.text)}});
   const jobs=[];['de','tl'].forEach(lang=>{const long=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length>90),short=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length<=90);long.forEach(x=>jobs.push({lang,items:[x]}));for(let k=0;k<short.length;k+=10)jobs.push({lang,items:short.slice(k,k+10)})});
