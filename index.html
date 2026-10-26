@@ -3855,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-26.5';
+const APP_VERSION='2026-10-26.6';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4186,7 +4186,7 @@ function ubenHTML(){
 const POD={live:false,paused:false,i:0,steps:[],tk:0,keep:null,gen:null,file:null,hide:false};
 function gemKey(){let k='';try{k=localStorage.getItem('sprachen_lernen_gemini')||''}catch(e){}return k||((window.GEMINI_CONFIG&&window.GEMINI_CONFIG.apiKey)||'')}
 function gemKeySet(v){v=(v||'').trim();try{if(v)localStorage.setItem('sprachen_lernen_gemini',v);else localStorage.removeItem('sprachen_lernen_gemini')}catch(e){}render();if(v)toast('Schlüssel auf diesem Gerät gespeichert.')}
-function podSettings(){const s=S.settings;return {mins:s.podMins||10,pause:s.podPause||4,dir:s.podDir||'mix'}}
+function podSettings(){const s=S.settings;return {mins:s.podMins||10,pause:s.podPause||4,dir:s.podDir||'mix',rate:s.podRate||0.85}}
 function stripHtml(x){return String(x||'').replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').replace(/\s([.,;:!?])/g,'$1').trim()}
 function podWords(n){
   const now=Date.now(),all=vocabItems();
@@ -4198,22 +4198,22 @@ function podWords(n){
 }
 function podScript(){
   const o=podSettings(),P=o.pause;
-  const perWord=1.6+P+3.2+0.8,budget=o.mins*60-50;
+  const perWord=1.6+P+4.4+1.8,budget=o.mins*60-50;
   const nW=Math.max(8,Math.min(60,Math.floor(budget*0.78/perWord)));
   const {words,due,hard}=podWords(nW);
   if(words.length<4)return null;
-  const st=[];const say=(lang,text)=>st.push({t:'say',lang:lang,text:text});const pause=s=>st.push({t:'pause',s:s});const mark=(label,i,n)=>st.push({t:'mark',label:label,i:i,n:n});
+  const st=[];const say=(lang,text,slow)=>st.push({t:'say',lang:lang,text:text,slow:!!slow});const pause=s=>st.push({t:'pause',s:s});const mark=(label,i,n)=>st.push({t:'mark',label:label,i:i,n:n});
   const dir=o.dir;const nA=dir==='de'?words.length:dir==='tl'?0:Math.ceil(words.length*0.6);
   const A=words.slice(0,nA),B=words.slice(nA);
   say('de',`Hallo ${USER||''}. Deine ${LANG.name}-Folge vom ${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}. Heute ${words.length} Wörter${due?', davon '+due+' zur Wiederholung fällig':''}${hard?' und '+hard+' schwierige':''}. Du hörst das Wort, dann hast du ${P} Sekunden, um die Antwort laut zu sagen. Danach kommt die Lösung. Los geht's.`);
   pause(1.5);
   if(A.length){say('de','Teil eins. Deutsch nach '+LANG.name+'.');pause(1);
-    A.forEach((w,i)=>{mark('Deutsch → '+LANG.name,i+1,A.length);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(P);say('tl',w.say);pause(0.7);say('tl',w.say);pause(0.9)})}
+    A.forEach((w,i)=>{mark('Deutsch → '+LANG.name,i+1,A.length);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(P);say('tl',w.say);pause(1.6);say('tl',w.say,true);pause(1.8)})}
   if(B.length){say('de','Teil zwei. '+LANG.name+' nach Deutsch.');pause(1);
-    B.forEach((w,i)=>{mark(LANG.name+' → Deutsch',i+1,B.length);say('tl',w.say);pause(P);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(0.5);say('tl',w.say);pause(0.9)})}
+    B.forEach((w,i)=>{mark(LANG.name+' → Deutsch',i+1,B.length);say('tl',w.say);pause(1.2);say('tl',w.say,true);pause(P);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(1);say('tl',w.say);pause(1.8)})}
   const sents=shuffle(NODES.filter(x=>x.type!=='test'&&pDone(x.id)).flatMap(x=>(x.S||[]).concat(x.D||[])).filter(s=>{const k=s.gr.split(' ').length;return k>=3&&k<=8})).slice(0,Math.max(3,Math.min(8,Math.round(o.mins*0.6))));
   if(sents.length){say('de','Teil drei. Ganze Sätze. Sag den Satz auf '+LANG.name+', bevor du ihn hörst.');pause(1);
-    sents.forEach((s,i)=>{mark('Sätze',i+1,sents.length);say('de',s.de);pause(P+2);say('tl',s.say);pause(0.8);say('tl',s.say);pause(1)})}
+    sents.forEach((s,i)=>{mark('Sätze',i+1,sents.length);say('de',s.de);pause(P+2);say('tl',s.say);pause(1.8);say('tl',s.say,true);pause(2)})}
   const g=shuffle(GRAM.filter(x=>S.gram[x.id]&&S.gram[x.id].done))[0]||GRAM.find(x=>gramOpen(x));
   if(g){const o_=g._o||{};const pg=(g.learn&&g.learn[0])?stripHtml(g.learn[0].p):'';const merke=stripHtml(o_.merke||'')||g.desc||'';
     const X=(o_.X||o_.err||[]).slice(0,3);
@@ -4248,7 +4248,7 @@ function podNext(){
   if(s.t==='pause'){POD.cur=s.s>=2?'…':POD.cur;podPaint();POD.timer=setTimeout(()=>{if(POD.tk===tk)podNext()},s.s*1000);return}
   POD.cur=s.lang==='de'?'🇩🇪 '+s.text:LANG.flag+' '+s.text;podPaint();
   if(!TTS){POD.timer=setTimeout(()=>{if(POD.tk===tk)podNext()},Math.max(800,s.text.length*60));return}
-  const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==='de'?'de-DE':LANG.tts;const v=podVoice(s.lang);if(v)u.voice=v;u.rate=s.lang==='de'?Math.min(1.05,S.settings.rate+0.1):S.settings.rate;
+  const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==='de'?'de-DE':LANG.tts;const v=podVoice(s.lang);if(v)u.voice=v;const pr=podSettings().rate;u.rate=s.lang==='de'?1.0:(s.slow?Math.max(0.5,pr-0.15):pr);
   let done=false;const fin=()=>{if(done||POD.tk!==tk)return;done=true;podNext()};u.onend=fin;u.onerror=fin;window._utt=u;
   speechSynthesis.speak(u);POD.timer=setTimeout(fin,Math.max(2500,s.text.length*110));
 }
@@ -4270,6 +4270,7 @@ function podHTML(){
 ${sel('podMins',[[5,'5 Minuten'],[10,'10 Minuten'],[15,'15 Minuten'],[20,'20 Minuten'],[30,'30 Minuten']],'Länge der Folge')}
 ${sel('podPause',[[3,'3 Sekunden'],[4,'4 Sekunden'],[6,'6 Sekunden'],[8,'8 Sekunden']],'Zeit zum Antworten')}
 ${sel('podDir',[['mix','Gemischt (60 % Deutsch → '+esc(LANG.name)+')'],['de','Nur Deutsch → '+esc(LANG.name)],['tl','Nur '+esc(LANG.name)+' → Deutsch']],'Richtung')}
+${sel('podRate',[[0.7,'Sehr langsam'],[0.8,'Langsam'],[0.85,'Etwas langsamer (Standard)'],[0.95,'Normal'],[1.05,'Zügig']],'Sprechtempo '+esc(LANG.name))}
 <div class="actions" id="podbtns">${podBtns()}</div>
 <p class="meta">Die Folge wird jedes Mal neu aus deinem Lernstand gebaut: fällige und schwierige Wörter zuerst, dann die letzten Lektionen. Gesprochen mit der Stimme deines Geräts.</p>`:
   `<p>Noch keine Wörter gelernt. Schließe zuerst eine Lektion im Lernpfad ab.</p>`}</div>
@@ -4395,11 +4396,15 @@ async function cttsSynth(texts,code,rate){
 async function podExportCloud(sc){
   const steps=sc.steps.filter(s=>s.t!=='mark');const rate=24000;
   const uniq={de:[],tl:[]};const key={};steps.forEach(s=>{if(s.t!=='say')return;const k=s.lang+'|'+s.text;if(!(k in key)){key[k]=uniq[s.lang].length;uniq[s.lang].push(s.text)}});
+  const pr=podSettings().rate;
   POD.gen='Erzeuge deutsche Ansagen …';POD.genPct=10;podGenPaint();
   const de=await cttsSynth(uniq.de,'de-DE',1.0);
   POD.gen='Erzeuge '+LANG.name+' …';POD.genPct=55;podGenPaint();
-  const tl=await cttsSynth(uniq.tl,LANG.tts,Math.min(1,Math.max(0.8,S.settings.rate)));
-  const audio={de:de,tl:tl};const get=s=>audio[s.lang][key[s.lang+'|'+s.text]];
+  const tl=await cttsSynth(uniq.tl,LANG.tts,pr);
+  POD.gen='Erzeuge langsame Wiederholungen …';POD.genPct=75;podGenPaint();
+  const slowIdx=[...new Set(steps.filter(s=>s.t==='say'&&s.lang==='tl'&&s.slow).map(s=>key['tl|'+s.text]))];
+  const tlSlowArr=slowIdx.length?await cttsSynth(slowIdx.map(i=>uniq.tl[i]),LANG.tts,Math.max(0.5,pr-0.15)):[];const tlSlow={};slowIdx.forEach((i,q)=>tlSlow[i]=tlSlowArr[q]);
+  const audio={de:de,tl:tl};const get=s=>{const i=key[s.lang+'|'+s.text];return (s.lang==='tl'&&s.slow&&tlSlow[i])?tlSlow[i]:audio[s.lang][i]};
   let total=0;steps.forEach(s=>{total+=s.t==='pause'?Math.round(s.s*rate):(get(s)?get(s).length:0)});
   const out=new Int16Array(total);let p=0;steps.forEach(s=>{if(s.t==='pause'){p+=Math.round(s.s*rate)}else{const a=get(s);if(a){out.set(a,p);p+=a.length}}});
   return {out:out,rate:rate,chars:uniq.de.join('').length+uniq.tl.join('').length};
