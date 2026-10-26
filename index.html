@@ -205,11 +205,13 @@ td small{color:var(--muted)}
   --shadow:0 2px 10px rgba(20,33,61,.08);
 }}
 .ubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.ubtile{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;box-shadow:var(--shadow);font:inherit}.ubtile span{font-size:1.6rem}.ubtile b{font-size:.92rem}.ubtile small{color:var(--muted);font-size:.72rem;text-align:center}@media(min-width:600px){.ubgrid{grid-template-columns:repeat(6,1fr)}}
+.podbig{font-size:1.9rem;font-weight:800;text-align:center;margin:14px 0;min-height:2.6rem}.podsub{text-align:center;color:var(--muted)}.podbar{height:8px;background:var(--line);border-radius:4px;overflow:hidden}.podbar i{display:block;height:100%;background:var(--blue2)}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script src="firebase-config.js"></script>
+<script src="gemini-config.js"></script>
 <script>
 "use strict";
 /* ============================================================
@@ -3712,6 +3714,7 @@ function render(){
   else if(view==='read')app.innerHTML=readHTML();
   else if(view==='phrases')app.innerHTML=phrasesHTML();
   else if(view==='help')app.innerHTML=helpHTML();
+  else if(view==='podcast')app.innerHTML=podHTML();
   else if(view==='readtext')app.innerHTML=readTextHTML(viewArg);
   else if(view==='ref')app.innerHTML=refHTML();
   else if(view==='vocab'){app.innerHTML=vocabHTML();vocabList()}
@@ -3721,13 +3724,13 @@ function render(){
   if(NAVV.includes(view)){app.insertAdjacentHTML('beforeend',navHTML());window.scrollTo(0,0)}
 }
 function chooseHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.11</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.20</small></div><div class="nav">${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="Abmelden">${DEMO?'🎬 Demo beenden':'Abmelden'}</button></div></div>
 <h2 style="margin:4px 0">${DEMO?'Demo: Welche Sprache möchtest du ansehen?':'Hallo '+esc(USER||'')+'! Welche Sprache möchtest du lernen?'}</h2><p class="meta" style="margin:0 0 4px">Jede Sprache hat ihren eigenen Lernpfad und eigenen Fortschritt. Du kannst jederzeit wechseln.</p>${lastLine()}
 <div class="units">${LANGS.map(l=>`<div class="card unit" ${l.id===LANGID?'style="border:2px solid var(--blue2)"':''}><span class="ico">${l.flag}</span><h3>${esc(l.name)}</h3><p>${esc(l.native)} · ${esc(l.desc)}</p><div class="row"><button class="primary" onclick="setLang('${l.id}')">${l.id===LANGID?'Weiter':'Lernen'}</button></div></div>`).join('')}</div>`;
 }
 function setLang(id){try{localStorage.setItem('sprachen_lernen_lang_'+USER,id)}catch(e){}if(CLOUD.on&&CLOUD.user&&!DEMO){CLOUD.db.doc('users/'+USER).set({lang:id,name:USER},{merge:true}).catch(()=>{})}if(CLOUD.t){clearTimeout(CLOUD.t);cloudPush()}if(id===LANGID){go('home');return}location.reload()}
 function loginHTML(){
-  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.11</small></div></div>
+  return `<div class="top"><div class="brand">Sprachen <span>lernen</span><small class="ver">v1.20</small></div></div>
 <div class="card" style="max-width:420px;margin:20px auto"><h2 style="margin-top:0">Anmelden</h2><p class="meta">Wer lernt heute? Jeder hat seinen eigenen Fortschritt.${CLOUD.on?' <br>☁️ Dein Fortschritt wird online gesichert und ist auf allen Geräten verfügbar.':''}</p>
 <div class="opts" style="grid-template-columns:1fr 1fr">${USERS.map(u=>`<button class="opt" id="u_${u}" onclick="pickUser('${u}')">${esc(u)}</button>`).join('')}</div>
 <div style="margin-top:14px"><input id="pw" class="txt" type="password" autocomplete="current-password" placeholder="Passwort" onkeydown="if(event.key==='Enter')doLogin()"></div>
@@ -3852,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-25.3';
+const APP_VERSION='2026-10-26.1';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4176,11 +4179,172 @@ function ubenHTML(){
   if(hp.length)t.push(['🎧','Hören',hp.length+' Gespräche',`startHear('${hp[hp.length-1].id}')`]);
   if(rp.length)t.push(['💬','Sprechen','Rollenspiel',`go('role','${rp[rp.length-1].id}')`]);
   if(rd.length){const nx=rd.find(r=>!S.hi['read_'+r.id])||rd[rd.length-1];t.push(['📖','Lesen',rd.length+' von '+READS().length+' Texten',`go('readtext','${nx.id}')`])}
-  t.push(['🗣️','Sprachführer','Sätze nachschlagen',"go('phrases')"]);t.push(['🎮','Mehr','Zahlen, Uhrzeit, Spiele',"go('games')"]);
+  t.push(['🚗','Auto-Modus','Podcast zum Mitsprechen',"go('podcast')"]);t.push(['🗣️','Sprachführer','Sätze nachschlagen',"go('phrases')"]);t.push(['🎮','Mehr','Zahlen, Uhrzeit, Spiele',"go('games')"]);
   return `<h2 style="margin:10px 0 4px">Üben</h2><div class="ubgrid">${t.map(x=>`<button class="ubtile" onclick="${x[3]}"><span>${x[0]}</span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></button>`).join('')}</div>`;
 }
-function go(v,arg){if(v!=='vocab')VPLAY=null;stopSpeech();document.querySelectorAll('.confetti').forEach(e=>e.remove());clearTimers();view=v;viewArg=arg;render()}
-function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.11</small></div>
+/* ---------- Auto-Modus: Skript ---------- */
+const POD={live:false,paused:false,i:0,steps:[],tk:0,keep:null,gen:null,file:null,hide:false};
+function podSettings(){const s=S.settings;return {mins:s.podMins||10,pause:s.podPause||4,dir:s.podDir||'mix'}}
+function stripHtml(x){return String(x||'').replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').replace(/\s([.,;:!?])/g,'$1').trim()}
+function podWords(n){
+  const now=Date.now(),all=vocabItems();
+  const due=shuffle(all.filter(i=>S.items[i.id].due<=now)),hard=shuffle(hardItems().filter(i=>!due.includes(i)));
+  const recent=NODES.filter(x=>x.W&&pDone(x.id)).slice(-2).flatMap(x=>x.W).filter(i=>S.items[i.id]&&!due.includes(i)&&!hard.includes(i));
+  const rest=shuffle(all.filter(i=>!due.includes(i)&&!hard.includes(i)&&!recent.includes(i)));
+  const pick=due.concat(hard,shuffle(recent),rest).slice(0,n);
+  return {words:pick,due:Math.min(due.length,n),hard:Math.min(hard.length,Math.max(0,n-due.length))};
+}
+function podScript(){
+  const o=podSettings(),P=o.pause;
+  const perWord=1.6+P+3.2+0.8,budget=o.mins*60-50;
+  const nW=Math.max(8,Math.min(60,Math.floor(budget*0.78/perWord)));
+  const {words,due,hard}=podWords(nW);
+  if(words.length<4)return null;
+  const st=[];const say=(lang,text)=>st.push({t:'say',lang:lang,text:text});const pause=s=>st.push({t:'pause',s:s});const mark=(label,i,n)=>st.push({t:'mark',label:label,i:i,n:n});
+  const dir=o.dir;const nA=dir==='de'?words.length:dir==='tl'?0:Math.ceil(words.length*0.6);
+  const A=words.slice(0,nA),B=words.slice(nA);
+  say('de',`Hallo ${USER||''}. Deine ${LANG.name}-Folge vom ${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})}. Heute ${words.length} Wörter${due?', davon '+due+' zur Wiederholung fällig':''}${hard?' und '+hard+' schwierige':''}. Du hörst das Wort, dann hast du ${P} Sekunden, um die Antwort laut zu sagen. Danach kommt die Lösung. Los geht's.`);
+  pause(1.5);
+  if(A.length){say('de','Teil eins. Deutsch nach '+LANG.name+'.');pause(1);
+    A.forEach((w,i)=>{mark('Deutsch → '+LANG.name,i+1,A.length);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(P);say('tl',w.say);pause(0.7);say('tl',w.say);pause(0.9)})}
+  if(B.length){say('de','Teil zwei. '+LANG.name+' nach Deutsch.');pause(1);
+    B.forEach((w,i)=>{mark(LANG.name+' → Deutsch',i+1,B.length);say('tl',w.say);pause(P);say('de',w.de.replace(/\s*\([^)]*\)/g,''));pause(0.5);say('tl',w.say);pause(0.9)})}
+  const sents=shuffle(NODES.filter(x=>x.type!=='test'&&pDone(x.id)).flatMap(x=>(x.S||[]).concat(x.D||[])).filter(s=>{const k=s.gr.split(' ').length;return k>=3&&k<=8})).slice(0,Math.max(3,Math.min(8,Math.round(o.mins*0.6))));
+  if(sents.length){say('de','Teil drei. Ganze Sätze. Sag den Satz auf '+LANG.name+', bevor du ihn hörst.');pause(1);
+    sents.forEach((s,i)=>{mark('Sätze',i+1,sents.length);say('de',s.de);pause(P+2);say('tl',s.say);pause(0.8);say('tl',s.say);pause(1)})}
+  const g=shuffle(GRAM.filter(x=>S.gram[x.id]&&S.gram[x.id].done))[0]||GRAM.find(x=>gramOpen(x));
+  if(g){const o_=g._o||{};const pg=(g.learn&&g.learn[0])?stripHtml(g.learn[0].p):'';const merke=stripHtml(o_.merke||'')||g.desc||'';
+    const X=(o_.X||o_.err||[]).slice(0,3);
+    say('de','Zum Schluss ein bisschen Grammatik. Thema: '+g.title+'. '+(merke?merke+'. ':'')+(pg?pg.split(/(?<=[.!?])\s/).slice(0,3).join(' '):''));pause(1.2);
+    X.forEach((x,i)=>{mark('Grammatik',i+1,X.length);say('de','Beispiel: '+x[0]);pause(Math.max(2,P-1));say('tl',x[1].replace(/[«»„“"]/g,''));pause(1)})}
+  say('de','Das war deine Folge für heute. Gut gemacht. Bis zur nächsten Fahrt.');
+  const dur=st.reduce((a,x)=>a+(x.t==='pause'?x.s:x.t==='say'?Math.max(1,x.text.length/13):0),0);
+  return {steps:st,words:words.length,sents:sents.length,dur:Math.round(dur/60),gram:g?g.title:null};
+}
+/* ---------- Auto-Modus: Live-Wiedergabe mit Handy-Stimme ---------- */
+function podVoice(lang){if(lang==='tl')return greekVoice();const v=voices.filter(x=>/^de/i.test(x.lang));return v.find(x=>/google|neural|natural/i.test(x.name))||v[0]||null}
+function podKeepAlive(on){
+  try{
+    if(on){if(!POD.keep){const n=8000,b=new ArrayBuffer(44+n*2),d=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,8000,true);d.setUint32(28,16000,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);
+        const a=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));a.loop=true;a.volume=0.01;POD.keep=a}
+      POD.keep.play().catch(()=>{});
+      if('mediaSession' in navigator){navigator.mediaSession.metadata=new MediaMetadata({title:'Sprachen lernen – '+LANG.name,artist:'Auto-Modus für '+(USER||''),album:'Folge vom '+new Date().toLocaleDateString('de-DE')});
+        navigator.mediaSession.setActionHandler('pause',()=>podPause());navigator.mediaSession.setActionHandler('play',()=>podResume());navigator.mediaSession.setActionHandler('nexttrack',()=>podSkip());navigator.mediaSession.setActionHandler('previoustrack',()=>podBack());navigator.mediaSession.setActionHandler('stop',()=>podStop())}
+    }else{if(POD.keep){POD.keep.pause()}}
+  }catch(e){}
+}
+function podStart(){
+  const sc=podScript();if(!sc){toast('Lerne zuerst ein paar Wörter im Lernpfad, dann gibt es eine Folge.');return}
+  stopSpeech();POD.steps=sc.steps;POD.i=0;POD.live=true;POD.paused=false;POD.tk=++SPK;POD.cur='';POD.mark='';POD.start=Date.now();
+  podKeepAlive(true);render();podNext();
+}
+function podNext(){
+  if(!POD.live||POD.paused)return;const tk=POD.tk;
+  if(POD.i>=POD.steps.length){podStop();toast('Folge beendet. 🎉');return}
+  const s=POD.steps[POD.i++];
+  if(s.t==='mark'){POD.mark=s.label+' · '+s.i+'/'+s.n;podPaint();return podNext()}
+  if(s.t==='pause'){POD.cur=s.s>=2?'…':POD.cur;podPaint();POD.timer=setTimeout(()=>{if(POD.tk===tk)podNext()},s.s*1000);return}
+  POD.cur=s.lang==='de'?'🇩🇪 '+s.text:LANG.flag+' '+s.text;podPaint();
+  if(!TTS){POD.timer=setTimeout(()=>{if(POD.tk===tk)podNext()},Math.max(800,s.text.length*60));return}
+  const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==='de'?'de-DE':LANG.tts;const v=podVoice(s.lang);if(v)u.voice=v;u.rate=s.lang==='de'?Math.min(1.05,S.settings.rate+0.1):S.settings.rate;
+  let done=false;const fin=()=>{if(done||POD.tk!==tk)return;done=true;podNext()};u.onend=fin;u.onerror=fin;window._utt=u;
+  speechSynthesis.speak(u);POD.timer=setTimeout(fin,Math.max(2500,s.text.length*110));
+}
+function podPause(){if(!POD.live)return;POD.paused=true;clearTimeout(POD.timer);try{speechSynthesis.cancel()}catch(e){}POD.tk=++SPK;podPaint()}
+function podResume(){if(!POD.live||!POD.paused)return;POD.paused=false;POD.tk=++SPK;podKeepAlive(true);podPaint();podNext()}
+function podSkip(){if(!POD.live)return;clearTimeout(POD.timer);try{speechSynthesis.cancel()}catch(e){}POD.tk=++SPK;while(POD.i<POD.steps.length&&POD.steps[POD.i].t!=='mark')POD.i++;POD.paused=false;podNext()}
+function podBack(){if(!POD.live)return;clearTimeout(POD.timer);try{speechSynthesis.cancel()}catch(e){}POD.tk=++SPK;let k=POD.i-2;while(k>0&&POD.steps[k].t!=='mark')k--;const m=k;k--;while(k>0&&POD.steps[k].t!=='mark')k--;POD.i=Math.max(0,k);POD.paused=false;podNext()}
+function podStop(silent){clearTimeout(POD.timer);POD.live=false;POD.paused=false;POD.tk=++SPK;try{speechSynthesis.cancel()}catch(e){}podKeepAlive(false);if(!silent&&view==='podcast')render()}
+function podPaint(){const a=document.getElementById('podcur'),b=document.getElementById('podmark'),c=document.getElementById('podprog'),d=document.getElementById('podbtns');if(a)a.textContent=POD.hide?(POD.cur.startsWith('…')?'…':POD.cur?'🔊':''):POD.cur;if(b)b.textContent=POD.mark;if(c)c.style.width=(POD.i/Math.max(1,POD.steps.length)*100)+'%';if(d)d.innerHTML=podBtns()}
+function podBtns(){return POD.live?`<button onclick="podBack()">⏮</button>${POD.paused?'<button class="primary" onclick="podResume()">▶ Weiter</button>':'<button class="primary" onclick="podPause()">⏸ Pause</button>'}<button onclick="podSkip()">⏭</button><button class="ghost" onclick="podStop()">⏹ Beenden</button>`:`<button class="primary" onclick="podStart()">▶ Folge starten</button>`}
+function podHTML(){
+  const o=podSettings(),sc=POD.live?null:podScript();const gem=!!(window.GEMINI_CONFIG&&window.GEMINI_CONFIG.apiKey);
+  const sel=(k,vals,lab)=>`<div class="field"><label>${lab}</label><select onchange="S.settings.${k}=+this.value||this.value;save();render()">${vals.map(v=>`<option value="${v[0]}" ${String(o[k.replace('pod','').toLowerCase()])===String(v[0])?'selected':''}>${v[1]}</option>`).join('')}</select></div>`;
+  return topbar()+`<h2 style="margin:4px 0">🚗 Auto-Modus</h2><p class="meta" style="margin:0 0 10px">Deine persönliche Hör-Folge aus dem aktuellen Lernstand: Wort hören, laut antworten, Lösung hören. Fürs Auto, den Spaziergang oder die Küche.</p>
+<div class="card">${POD.live?`<div class="meta" id="podmark">${esc(POD.mark||'')}</div><div class="podbig" id="podcur">${esc(POD.hide?'🔊':POD.cur||'')}</div><div class="podbar"><i id="podprog" style="width:${POD.i/Math.max(1,POD.steps.length)*100}%"></i></div>
+<div class="actions" id="podbtns">${podBtns()}</div><div class="vtools"><button class="${POD.hide?'on':''}" onclick="POD.hide=!POD.hide;podPaint();this.classList.toggle('on')">👁 Text ausblenden</button></div>
+<p class="meta">Bildschirm darf aus: Die Folge läuft als Audio weiter, Pause und Weiter gehen über den Sperrbildschirm oder das Autoradio. Falls das Handy die Stimme beim Sperren stoppt, nutze die Podcast-Datei unten.</p>`:
+  sc?`<h3 style="margin-top:0">Heutige Folge</h3><p>${sc.words} Wörter · ${sc.sents} Sätze${sc.gram?' · Grammatik: '+esc(sc.gram):''} · ca. ${sc.dur} Minuten</p>
+${sel('podMins',[[5,'5 Minuten'],[10,'10 Minuten'],[15,'15 Minuten'],[20,'20 Minuten'],[30,'30 Minuten']],'Länge der Folge')}
+${sel('podPause',[[3,'3 Sekunden'],[4,'4 Sekunden'],[6,'6 Sekunden'],[8,'8 Sekunden']],'Zeit zum Antworten')}
+${sel('podDir',[['mix','Gemischt (60 % Deutsch → '+esc(LANG.name)+')'],['de','Nur Deutsch → '+esc(LANG.name)],['tl','Nur '+esc(LANG.name)+' → Deutsch']],'Richtung')}
+<div class="actions" id="podbtns">${podBtns()}</div>
+<p class="meta">Die Folge wird jedes Mal neu aus deinem Lernstand gebaut: fällige und schwierige Wörter zuerst, dann die letzten Lektionen. Gesprochen mit der Stimme deines Geräts.</p>`:
+  `<p>Noch keine Wörter gelernt. Schließe zuerst eine Lektion im Lernpfad ab.</p>`}</div>
+${!POD.live&&sc?`<div class="card"><h3 style="margin-top:0">🎙️ Als Podcast-Datei (MP3)</h3><p class="meta" style="margin:0 0 8px">Erzeugt dieselbe Folge mit natürlichen Google-Stimmen als Datei. Die Datei spielt überall: Musik-App, Podcast-App, Android Auto, ohne dass das Programm offen sein muss. Das Erzeugen dauert ein paar Minuten und braucht Internet.</p>
+${gem?`<div id="podgen">${POD.gen?`<div class="meta">${esc(POD.gen)}</div><div class="podbar"><i style="width:${POD.genPct||0}%"></i></div>`:`<div class="actions" style="justify-content:flex-start"><button class="primary" onclick="podExport()">🎙️ Datei erzeugen</button><button onclick="podTestKey()">Verbindung testen</button></div>`}</div>
+<div id="podfile">${podFileHTML()}</div>`:`<div class="warn">Dafür fehlt noch der Gemini-Schlüssel in der Datei <code>gemini-config.js</code> auf GitHub. Solange läuft nur die Live-Wiedergabe oben.</div>`}</div>`:''}`;
+}
+function podFileHTML(){const f=POD.file;if(!f)return '';return `<div class="wrow"><span style="font-size:1.5rem">🎧</span><div class="wt"><b>${esc(f.name)}</b><div class="wd">${f.mins} Min · ${(f.size/1048576).toFixed(1)} MB</div></div></div><audio controls style="width:100%;margin:6px 0" src="${f.url}"></audio><div class="vtools"><a class="btnlike" download="${esc(f.name)}" href="${f.url}"><button>⬇ Herunterladen</button></a><button class="ghost" onclick="podFileDelete()">Löschen</button></div><p class="meta">Zum Autoradio: Datei herunterladen, dann in der Musik-App des Handys abspielen (Ordner „Downloads“), oder per Bluetooth direkt aus dieser Seite starten.</p>`}
+/* ---------- Podcast-Datei über Gemini ---------- */
+const GEM={models:['gemini-2.5-flash-preview-tts','gemini-2.5-flash-tts','gemini-2.5-pro-preview-tts'],voiceDe:'Kore',voiceTl:'Puck'};
+async function gemTTS(text,voice){
+  const key=window.GEMINI_CONFIG.apiKey;let lastErr='';
+  for(const m of (window.GEMINI_CONFIG.model?[window.GEMINI_CONFIG.model]:GEM.models)){
+    for(let tries=0;tries<6;tries++){
+      const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:voice}}}}})});
+      if(r.status===429){const wait=15000*(tries+1);POD.gen='Kontingent kurz erschöpft – warte '+Math.round(wait/1000)+' s …';podGenPaint();await new Promise(x=>setTimeout(x,wait));continue}
+      if(r.status===404){lastErr='Modell '+m+' nicht gefunden';break}
+      if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}throw new Error('HTTP '+r.status+(t?': '+t:''))}
+      const j=await r.json();const part=(((j.candidates||[])[0]||{}).content||{}).parts||[];const p=part.find(x=>x.inlineData);if(!p)throw new Error('Keine Audiodaten in der Antwort');
+      const mime=p.inlineData.mimeType||'';const rate=+(mime.match(/rate=(\d+)/)||[])[1]||24000;const bin=atob(p.inlineData.data);const pcm=new Int16Array(bin.length>>1);for(let i=0;i<pcm.length;i++)pcm[i]=(bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8))<<16>>16;
+      GEM.model=m;return {pcm:pcm,rate:rate};
+    }
+  }
+  throw new Error(lastErr||'Sprachausgabe nicht erreichbar');
+}
+async function podTestKey(){POD.gen='Teste Verbindung …';podGenPaint();try{const a=await gemTTS('Hallo! Die Verbindung funktioniert.',GEM.voiceDe);POD.gen='';render();toast('✅ Verbindung ok ('+GEM.model+', '+(a.pcm.length/a.rate).toFixed(1)+' s Audio)');podPlayPcm(a.pcm,a.rate)}catch(e){POD.gen='';render();toast('❌ '+e.message)}}
+function podPlayPcm(pcm,rate){try{const a=new Audio(URL.createObjectURL(new Blob([pcmToWav(pcm,rate)],{type:'audio/wav'})));a.play()}catch(e){}}
+function pcmToWav(pcm,rate){const n=pcm.length,b=new ArrayBuffer(44+n*2),d=new DataView(b);const w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};w(0,'RIFF');d.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,rate,true);d.setUint32(28,rate*2,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*2,true);new Int16Array(b,44).set(pcm);return b}
+function splitSilence(pcm,rate,expect){
+  const fr=Math.round(rate*0.02),nf=Math.floor(pcm.length/fr),e=new Float32Array(nf);let peak=0;
+  for(let f=0;f<nf;f++){let s=0;for(let i=f*fr;i<(f+1)*fr;i++){const v=pcm[i]/32768;s+=v*v}e[f]=Math.sqrt(s/fr);if(e[f]>peak)peak=e[f]}
+  const tryTh=th=>{const segs=[];let inS=false,st=0,gap=0;const minGap=Math.round(0.28/0.02);
+    for(let f=0;f<nf;f++){const loud=e[f]>th;if(loud){if(!inS){inS=true;st=f}gap=0}else if(inS){gap++;if(gap>=minGap){segs.push([st,f-gap]);inS=false;gap=0}}}
+    if(inS)segs.push([st,nf]);return segs.filter(s=>s[1]-s[0]>=5)};
+  let best=null;for(const th of [peak*0.04,peak*0.06,peak*0.03,peak*0.09,peak*0.02]){const s=tryTh(th);if(s.length===expect){best=s;break}if(!best||Math.abs(s.length-expect)<Math.abs(best.length-expect))best=s}
+  const pad=Math.round(0.12/0.02);
+  return best.map(s=>pcm.subarray(Math.max(0,(s[0]-pad))*fr,Math.min(pcm.length,(s[1]+pad)*fr)));
+}
+function podGenPaint(){const el=document.getElementById('podgen');if(el)el.innerHTML=POD.gen?`<div class="meta">${esc(POD.gen)}</div><div class="podbar"><i style="width:${POD.genPct||0}%"></i></div>`:`<div class="actions" style="justify-content:flex-start"><button class="primary" onclick="podExport()">🎙️ Datei erzeugen</button><button onclick="podTestKey()">Verbindung testen</button></div>`}
+async function podExport(){
+  const sc=podScript();if(!sc){toast('Keine Wörter zum Üben.');return}
+  const steps=sc.steps.filter(s=>s.t!=='mark');
+  // Je Sprache alle verschiedenen Texte sammeln und in Paketen von 10 anfragen (Wiederholungen nur einmal erzeugen)
+  const uniq={de:[],tl:[]};const key={};steps.forEach(s=>{if(s.t!=='say')return;const k=s.lang+'|'+s.text;if(!(k in key)){key[k]=uniq[s.lang].length;uniq[s.lang].push(s.text)}});
+  const jobs=[];['de','tl'].forEach(lang=>{const long=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length>90),short=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length<=90);long.forEach(x=>jobs.push({lang,items:[x]}));for(let k=0;k<short.length;k+=10)jobs.push({lang,items:short.slice(k,k+10)})});
+  const audio={de:{},tl:{}};let rate=24000;POD.genPct=0;
+  try{
+    for(let k=0;k<jobs.length;k++){const j=jobs[k];POD.gen='Erzeuge Audio … Anfrage '+(k+1)+' von '+jobs.length;POD.genPct=Math.round(k/jobs.length*90);podGenPaint();
+      const voice=j.lang==='de'?GEM.voiceDe:GEM.voiceTl;
+      if(j.items.length===1){const a=await gemTTS(j.items[0].t,voice);rate=a.rate;audio[j.lang][j.items[0].i]=a.pcm;continue}
+      const a=await gemTTS(j.items.map(x=>/[.!?;…]$/.test(x.t)?x.t:x.t+'.').join('\n\n'),voice);rate=a.rate;
+      const segs=splitSilence(a.pcm,a.rate,j.items.length);
+      if(segs.length===j.items.length){j.items.forEach((x,q)=>audio[j.lang][x.i]=segs[q])}
+      else{for(const x of j.items){const b=await gemTTS(x.t,voice);audio[j.lang][x.i]=b.pcm}}
+    }
+    const get=s=>audio[s.lang][key[s.lang+'|'+s.text]];
+    POD.gen='Setze die Folge zusammen …';POD.genPct=92;podGenPaint();
+    let total=0;steps.forEach(s=>{total+=s.t==='pause'?Math.round(s.s*rate):(get(s)?get(s).length:0)});
+    const out=new Int16Array(total);let p=0;steps.forEach(s=>{if(s.t==='pause'){p+=Math.round(s.s*rate)}else{const a=get(s);if(a){out.set(a,p);p+=a.length}}});
+    let blob,name;const date=today();
+    try{if(!window.lamejs){await loadScript('https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js')}
+      POD.gen='Kodiere MP3 …';POD.genPct=96;podGenPaint();await new Promise(r=>setTimeout(r,30));
+      const enc=new lamejs.Mp3Encoder(1,rate,64),parts=[];for(let i=0;i<out.length;i+=1152*8){const c=enc.encodeBuffer(out.subarray(i,i+1152*8));if(c.length)parts.push(c)}const end=enc.flush();if(end.length)parts.push(end);
+      blob=new Blob(parts,{type:'audio/mpeg'});name='sprachen-'+LANG.id+'-'+(USER||'').toLowerCase()+'-'+date+'.mp3';
+    }catch(e){blob=new Blob([pcmToWav(out,rate)],{type:'audio/wav'});name='sprachen-'+LANG.id+'-'+(USER||'').toLowerCase()+'-'+date+'.wav'}
+    POD.file={name:name,url:URL.createObjectURL(blob),size:blob.size,mins:Math.round(total/rate/60),blob:blob};
+    try{await podFileSave(blob,name,Math.round(total/rate/60))}catch(e){}
+    POD.gen='';POD.genPct=0;render();toast('🎧 Folge fertig: '+name);
+  }catch(e){POD.gen='';POD.genPct=0;render();toast('❌ Erzeugen fehlgeschlagen: '+e.message)}
+}
+function podDB(){return new Promise((res,rej)=>{const r=indexedDB.open('sprachen_lernen_pod',1);r.onupgradeneeded=()=>r.result.createObjectStore('files');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function podFileSave(blob,name,mins){const db=await podDB();await new Promise((res,rej)=>{const t=db.transaction('files','readwrite');t.objectStore('files').put({blob:blob,name:name,mins:mins,ts:Date.now()},(USER||'')+'_'+LANG.id);t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function podFileLoad(){try{const db=await podDB();const f=await new Promise((res,rej)=>{const r=db.transaction('files').objectStore('files').get((USER||'')+'_'+LANG.id);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});if(f&&f.blob){POD.file={name:f.name,url:URL.createObjectURL(f.blob),size:f.blob.size,mins:f.mins,blob:f.blob};if(view==='podcast')render()}}catch(e){}}
+async function podFileDelete(){POD.file=null;try{const db=await podDB();db.transaction('files','readwrite').objectStore('files').delete((USER||'')+'_'+LANG.id)}catch(e){}render()}
+if(typeof indexedDB!=='undefined'&&USER)setTimeout(podFileLoad,500);
+function go(v,arg){if(v!=='vocab')VPLAY=null;if(v!=='podcast'&&typeof podStop==='function'&&POD.live)podStop(true);stopSpeech();document.querySelectorAll('.confetti').forEach(e=>e.remove());clearTimers();view=v;viewArg=arg;render()}
+function topbar(){return `<div class="top"><div class="brand" onclick="go('home')" style="cursor:pointer">${esc(LANG.native)} <span>lernen</span><small class="ver">v1.20</small></div>
 <div class="nav"><span id="cloudst" title="Sicherung" style="align-self:center;font-size:.85rem">${cloudBadge()}</span><button onclick="go('choose')" title="Sprache wechseln">${LANG.flag}</button><button onclick="go('settings')" title="Einstellungen">⚙️</button>${DEMO?'':'<span class="who">👤 '+esc(USER||'')+'</span>'}<button onclick="logout()" title="${DEMO?'Demo beenden':'Abmelden'}">${DEMO?'🎬 Ende':'Abmelden'}</button></div></div>`}
 function unitProgress(u){
   const ids=ALL.filter(i=>i.unit===u.id);
@@ -4272,7 +4436,7 @@ ${CLOUD.on&&!DEMO?`<p class="meta">☁️ Dein Fortschritt wird automatisch onli
 <div class="field"><label>Alles exportieren<small>Alle Sprachen von ${esc(USER||'')} als Datei – Notfallkopie</small></label><button onclick="exportAll()">⬇ Datei</button></div>
 <div class="field"><label>Aus Datei wiederherstellen<small>Sicherungsdatei einlesen (alle Sprachen oder eine)</small></label><button onclick="$('#imp').click()">⬆ Datei</button></div>
 <div class="field"><label>Diese Sprache zurücksetzen<small>Löscht den Fortschritt in ${esc(LANG.name)}</small></label><button class="ghost" onclick="resetData()">Zurücksetzen</button></div>
-<p class="meta" style="margin-top:10px">Version 1.11 · Build ${APP_VERSION}</p>
+<p class="meta" style="margin-top:10px">Version 1.20 · Build ${APP_VERSION}</p>
 <input id="imp" type="file" accept=".json" hidden onchange="importData(this.files[0])"></div>`;
 }
 function exportData(){const b=new Blob([JSON.stringify(S)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(USER||'gast').toLowerCase()+'-'+LANG.exportName;a.click()}
@@ -4446,7 +4610,7 @@ function clearTimers(){timers.forEach(t=>{clearInterval(t);clearTimeout(t)});tim
 const NAVV=['home','path','ref','vocab','list','settings','stats','summary','grammar','games','gsummary'];
 function navHTML(){
   const it=[['home','🏠','Start'],['path','🗺️','Lernpfad'],['vocab','📚','Wörter'],['grammar','📘','Grammatik'],['games','🎮','Üben'],['stats','📊','Fortschritt']];
-  let act=view;if(view==='summary')act='home';if(view==='ref')act='grammar';if(view==='cards')act='vocab';if(view==='list')act=(UBY[viewArg]&&UBY[viewArg].hidden)?'path':'home';if(view==='gsummary')act=(GS&&GS.back)||'games';if(view==='read'||view==='readtext'||view==='phrases')act='home';if(view==='help')act='home';
+  let act=view;if(view==='summary')act='home';if(view==='ref')act='grammar';if(view==='cards')act='vocab';if(view==='list')act=(UBY[viewArg]&&UBY[viewArg].hidden)?'path':'home';if(view==='gsummary')act=(GS&&GS.back)||'games';if(view==='read'||view==='readtext'||view==='phrases')act='home';if(view==='help'||view==='podcast')act='home';
   return `<nav class="bnav">${it.map(x=>`<button class="${act===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join('')}</nav>`;
 }
 
@@ -4624,13 +4788,14 @@ ${S_.map((x,i)=>`<div class="wrow"><div class="nico" style="font-size:1.1rem;fon
    ['startSatzbau()','🧩','Satzbau','Bring die Wörter in die richtige Reihenfolge. Rekord: '+(S.hi.satz||0)],
    ['startHear()','🎧','Hörverstehen','Ein Gespräch aus einer gelernten Lektion anhören und Fragen dazu beantworten – ohne Text.'],
    ['startRole()','💬','Rollenspiel','Du übernimmst eine Rolle im Gespräch: Hör den Partner, antworte mit den richtigen Worten.'],
+   ["go('podcast')",'🚗','Auto-Modus','Deine persönliche Hör-Folge zum Mitsprechen – fürs Auto oder unterwegs. Auch als Podcast-Datei.'],
    ['startDictation()','✍️','Diktat','Einen Satz hören und aufschreiben – trainiert Hören und Rechtschreibung.'],
    ['startClock()','🕒','Uhrzeit','Wie spät ist es? Uhrzeiten hören, lesen und schreiben. Rekord: '+(S.hi.clock||0)],
    ['startNumbers()','🔢','Zahlen','Zahlen hören, lesen und schreiben – von 0 bis 1000. Rekord: '+(S.hi.numbers||0)],
    ["go('phrases')",'🗣️','Sprachführer','Alle Sätze aus deinen Lektionen nach Thema – nachschlagen, anhören, drucken.'],
    ["go('read')",'📖','Lesen','Kurze Texte auf '+LANG.name+' lesen, anhören und Fragen dazu beantworten.'],
    ['startHard()','🎯','Schwierige Wörter','Die Wörter, die dir am häufigsten Fehler machen, gezielt wiederholen.']];
-  const SK=new Set(['🎧','💬','📖','🔢','🕒','🎯','🗣️','✍️']);const tile=(t,lab)=>`<div class="card unit"><span class="ico">${t[1]}</span><h3>${t[2]}</h3><p>${esc(t[3])}</p><div class="row"><button class="primary" onclick="${t[0]}">${lab}</button></div></div>`;
+  const SK=new Set(['🎧','💬','📖','🔢','🕒','🎯','🗣️','✍️','🚗']);const tile=(t,lab)=>`<div class="card unit"><span class="ico">${t[1]}</span><h3>${t[2]}</h3><p>${esc(t[3])}</p><div class="row"><button class="primary" onclick="${t[0]}">${lab}</button></div></div>`;
   return topbar()+`<h2 style="margin:4px 0 4px">Üben</h2><p class="meta" style="margin:0 0 10px">Hören, Sprechen, Lesen, Zahlen und Uhrzeit – ergänzend zum Lernpfad.</p><div class="gametiles">${T.filter(t=>SK.has(t[1])).map(t=>tile(t,'Starten')).join('')}</div>
 <h2 style="margin:18px 0 4px">Spiele</h2><p class="meta" style="margin:0 0 10px">Kurz und mit Herzen – gut für zwischendurch.</p><div class="gametiles">${T.filter(t=>!SK.has(t[1])).map(t=>tile(t,'Spielen')).join('')}</div>`;
 }
