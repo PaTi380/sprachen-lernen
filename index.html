@@ -3855,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-26.1';
+const APP_VERSION='2026-10-26.2';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4184,6 +4184,8 @@ function ubenHTML(){
 }
 /* ---------- Auto-Modus: Skript ---------- */
 const POD={live:false,paused:false,i:0,steps:[],tk:0,keep:null,gen:null,file:null,hide:false};
+function gemKey(){let k='';try{k=localStorage.getItem('sprachen_lernen_gemini')||''}catch(e){}return k||((window.GEMINI_CONFIG&&window.GEMINI_CONFIG.apiKey)||'')}
+function gemKeySet(v){v=(v||'').trim();try{if(v)localStorage.setItem('sprachen_lernen_gemini',v);else localStorage.removeItem('sprachen_lernen_gemini')}catch(e){}render();if(v)toast('Schlüssel auf diesem Gerät gespeichert.')}
 function podSettings(){const s=S.settings;return {mins:s.podMins||10,pause:s.podPause||4,dir:s.podDir||'mix'}}
 function stripHtml(x){return String(x||'').replace(/<br\s*\/?>/gi,'. ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').replace(/\s([.,;:!?])/g,'$1').trim()}
 function podWords(n){
@@ -4258,7 +4260,7 @@ function podStop(silent){clearTimeout(POD.timer);POD.live=false;POD.paused=false
 function podPaint(){const a=document.getElementById('podcur'),b=document.getElementById('podmark'),c=document.getElementById('podprog'),d=document.getElementById('podbtns');if(a)a.textContent=POD.hide?(POD.cur.startsWith('…')?'…':POD.cur?'🔊':''):POD.cur;if(b)b.textContent=POD.mark;if(c)c.style.width=(POD.i/Math.max(1,POD.steps.length)*100)+'%';if(d)d.innerHTML=podBtns()}
 function podBtns(){return POD.live?`<button onclick="podBack()">⏮</button>${POD.paused?'<button class="primary" onclick="podResume()">▶ Weiter</button>':'<button class="primary" onclick="podPause()">⏸ Pause</button>'}<button onclick="podSkip()">⏭</button><button class="ghost" onclick="podStop()">⏹ Beenden</button>`:`<button class="primary" onclick="podStart()">▶ Folge starten</button>`}
 function podHTML(){
-  const o=podSettings(),sc=POD.live?null:podScript();const gem=!!(window.GEMINI_CONFIG&&window.GEMINI_CONFIG.apiKey);
+  const o=podSettings(),sc=POD.live?null:podScript();const gem=!!gemKey();
   const sel=(k,vals,lab)=>`<div class="field"><label>${lab}</label><select onchange="S.settings.${k}=+this.value||this.value;save();render()">${vals.map(v=>`<option value="${v[0]}" ${String(o[k.replace('pod','').toLowerCase()])===String(v[0])?'selected':''}>${v[1]}</option>`).join('')}</select></div>`;
   return topbar()+`<h2 style="margin:4px 0">🚗 Auto-Modus</h2><p class="meta" style="margin:0 0 10px">Deine persönliche Hör-Folge aus dem aktuellen Lernstand: Wort hören, laut antworten, Lösung hören. Fürs Auto, den Spaziergang oder die Küche.</p>
 <div class="card">${POD.live?`<div class="meta" id="podmark">${esc(POD.mark||'')}</div><div class="podbig" id="podcur">${esc(POD.hide?'🔊':POD.cur||'')}</div><div class="podbar"><i id="podprog" style="width:${POD.i/Math.max(1,POD.steps.length)*100}%"></i></div>
@@ -4272,15 +4274,16 @@ ${sel('podDir',[['mix','Gemischt (60 % Deutsch → '+esc(LANG.name)+')'],['de','
 <p class="meta">Die Folge wird jedes Mal neu aus deinem Lernstand gebaut: fällige und schwierige Wörter zuerst, dann die letzten Lektionen. Gesprochen mit der Stimme deines Geräts.</p>`:
   `<p>Noch keine Wörter gelernt. Schließe zuerst eine Lektion im Lernpfad ab.</p>`}</div>
 ${!POD.live&&sc?`<div class="card"><h3 style="margin-top:0">🎙️ Als Podcast-Datei (MP3)</h3><p class="meta" style="margin:0 0 8px">Erzeugt dieselbe Folge mit natürlichen Google-Stimmen als Datei. Die Datei spielt überall: Musik-App, Podcast-App, Android Auto, ohne dass das Programm offen sein muss. Das Erzeugen dauert ein paar Minuten und braucht Internet.</p>
+<div class="field"><label>Gemini-Schlüssel<small>${gem?'Eingetragen · nur auf diesem Gerät gespeichert':'Aus Google AI Studio (kostenloses Projekt) – wird nur auf diesem Gerät gespeichert'}</small></label><div style="display:flex;gap:6px"><input id="gemkey" class="txt" style="font-size:.9rem;padding:8px;text-align:left;max-width:220px" type="password" placeholder="${gem?'••••••••':'Schlüssel einfügen'}" autocomplete="off"><button onclick="gemKeySet(document.getElementById('gemkey').value)">Speichern</button>${gem?`<button class="ghost" onclick="gemKeySet('')">✕</button>`:''}</div></div>
 ${gem?`<div id="podgen">${POD.gen?`<div class="meta">${esc(POD.gen)}</div><div class="podbar"><i style="width:${POD.genPct||0}%"></i></div>`:`<div class="actions" style="justify-content:flex-start"><button class="primary" onclick="podExport()">🎙️ Datei erzeugen</button><button onclick="podTestKey()">Verbindung testen</button></div>`}</div>
-<div id="podfile">${podFileHTML()}</div>`:`<div class="warn">Dafür fehlt noch der Gemini-Schlüssel in der Datei <code>gemini-config.js</code> auf GitHub. Solange läuft nur die Live-Wiedergabe oben.</div>`}</div>`:''}`;
+<div id="podfile">${podFileHTML()}</div>`:`<p class="meta">Ohne Schlüssel läuft nur die Live-Wiedergabe oben. Den Schlüssel bekommt ihr von Till.</p>`}</div>`:''}`;
 }
 function podFileHTML(){const f=POD.file;if(!f)return '';return `<div class="wrow"><span style="font-size:1.5rem">🎧</span><div class="wt"><b>${esc(f.name)}</b><div class="wd">${f.mins} Min · ${(f.size/1048576).toFixed(1)} MB</div></div></div><audio controls style="width:100%;margin:6px 0" src="${f.url}"></audio><div class="vtools"><a class="btnlike" download="${esc(f.name)}" href="${f.url}"><button>⬇ Herunterladen</button></a><button class="ghost" onclick="podFileDelete()">Löschen</button></div><p class="meta">Zum Autoradio: Datei herunterladen, dann in der Musik-App des Handys abspielen (Ordner „Downloads“), oder per Bluetooth direkt aus dieser Seite starten.</p>`}
 /* ---------- Podcast-Datei über Gemini ---------- */
 const GEM={models:['gemini-2.5-flash-preview-tts','gemini-2.5-flash-tts','gemini-2.5-pro-preview-tts'],voiceDe:'Kore',voiceTl:'Puck'};
 async function gemTTS(text,voice){
-  const key=window.GEMINI_CONFIG.apiKey;let lastErr='';
-  for(const m of (window.GEMINI_CONFIG.model?[window.GEMINI_CONFIG.model]:GEM.models)){
+  const key=gemKey();if(!key)throw new Error('Kein Gemini-Schlüssel eingetragen');let lastErr='';
+  for(const m of ((window.GEMINI_CONFIG&&window.GEMINI_CONFIG.model)?[window.GEMINI_CONFIG.model]:GEM.models)){
     for(let tries=0;tries<6;tries++){
       const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:voice}}}}})});
       if(r.status===429){const wait=15000*(tries+1);POD.gen='Kontingent kurz erschöpft – warte '+Math.round(wait/1000)+' s …';podGenPaint();await new Promise(x=>setTimeout(x,wait));continue}
