@@ -3855,7 +3855,7 @@ function fsGet(){try{return localStorage.getItem('sprachen_lernen_fs')||'auto'}c
 function fsApply(){const v=fsGet(),p=v==='auto'?fsAuto():(+v||100);try{document.documentElement.style.fontSize=(16*p/100)+'px'}catch(e){}}
 function fsSet(v){try{localStorage.setItem('sprachen_lernen_fs',v)}catch(e){}fsApply();render()}
 try{fsApply()}catch(e){}
-const APP_VERSION='2026-10-26.3';
+const APP_VERSION='2026-10-26.4';
 let DEV=null;try{DEV=sessionStorage.getItem('sprachen_lernen_dev')}catch(e){}
 if(!DEV){DEV=Math.random().toString(36).slice(2,8);try{sessionStorage.setItem('sprachen_lernen_dev',DEV)}catch(e){}}
 const LAST={t0:Date.now(),prev:null};
@@ -4294,7 +4294,7 @@ async function gemTTS(text,voice){
   for(const m of list){
     for(let tries=0;tries<6;tries++){
       const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({contents:[{parts:[{text:text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:voice}}}}})});
-      if(r.status===429){const wait=15000*(tries+1);POD.gen='Kontingent kurz erschöpft – warte '+Math.round(wait/1000)+' s …';podGenPaint();await new Promise(x=>setTimeout(x,wait));continue}
+      if(r.status===429){const wait=20000*(tries+1);POD.gen='Kontingent kurz erschöpft – warte '+Math.round(wait/1000)+' s …';podGenPaint();await new Promise(x=>setTimeout(x,wait));continue}
       if(r.status===404){lastErr='Modell '+m+' nicht gefunden';break}
       if(!r.ok){let t='';try{t=(await r.json()).error.message}catch(e){}lastErr='HTTP '+r.status+(t?': '+t:'')+' ('+m+')';if(r.status===400&&/modalit|audio|not support/i.test(t))break;throw new Error(lastErr)}
       const j=await r.json();const cand=(j.candidates||[])[0]||{};const parts=(cand.content||{}).parts||[];const p=parts.find(x=>x.inlineData&&/audio/i.test(x.inlineData.mimeType||''));
@@ -4325,16 +4325,17 @@ async function podExport(){
   try{if(!GEM.model)await gemModels()}catch(e){}
   // Je Sprache alle verschiedenen Texte sammeln und in Paketen von 10 anfragen (Wiederholungen nur einmal erzeugen)
   const uniq={de:[],tl:[]};const key={};steps.forEach(s=>{if(s.t!=='say')return;const k=s.lang+'|'+s.text;if(!(k in key)){key[k]=uniq[s.lang].length;uniq[s.lang].push(s.text)}});
-  const jobs=[];['de','tl'].forEach(lang=>{const long=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length>90),short=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length<=90);long.forEach(x=>jobs.push({lang,items:[x]}));for(let k=0;k<short.length;k+=10)jobs.push({lang,items:short.slice(k,k+10)})});
+  const jobs=[];['de','tl'].forEach(lang=>{const long=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length>90),short=uniq[lang].map((t,i)=>({t,i})).filter(x=>x.t.length<=90);long.forEach(x=>jobs.push({lang,items:[x]}));for(let k=0;k<short.length;k+=18)jobs.push({lang,items:short.slice(k,k+18)})});
   const audio={de:{},tl:{}};let rate=24000;POD.genPct=0;
   try{
-    for(let k=0;k<jobs.length;k++){const j=jobs[k];POD.gen='Erzeuge Audio … Anfrage '+(k+1)+' von '+jobs.length;POD.genPct=Math.round(k/jobs.length*90);podGenPaint();
+    const GAP=(window.GEMINI_CONFIG&&window.GEMINI_CONFIG.gapSec)||12;
+    for(let k=0;k<jobs.length;k++){const j=jobs[k];if(k>0){for(let w=GAP;w>0;w--){POD.gen='Anfrage '+(k+1)+' von '+jobs.length+' – kurze Pause wegen Kontingent ('+w+' s) …';podGenPaint();await new Promise(x=>setTimeout(x,1000))}}POD.gen='Erzeuge Audio … Anfrage '+(k+1)+' von '+jobs.length;POD.genPct=Math.round(k/jobs.length*90);podGenPaint();
       const voice=j.lang==='de'?GEM.voiceDe:GEM.voiceTl;
       if(j.items.length===1){const a=await gemTTS(j.items[0].t,voice);rate=a.rate;audio[j.lang][j.items[0].i]=a.pcm;continue}
       const a=await gemTTS(j.items.map(x=>/[.!?;…]$/.test(x.t)?x.t:x.t+'.').join('\n\n'),voice);rate=a.rate;
       const segs=splitSilence(a.pcm,a.rate,j.items.length);
       if(segs.length===j.items.length){j.items.forEach((x,q)=>audio[j.lang][x.i]=segs[q])}
-      else{for(const x of j.items){const b=await gemTTS(x.t,voice);audio[j.lang][x.i]=b.pcm}}
+      else{POD.gen='Trennung unklar ('+segs.length+' statt '+j.items.length+') – frage einzeln …';podGenPaint();for(const x of j.items){await new Promise(r=>setTimeout(r,GAP*1000));const b=await gemTTS(x.t,voice);audio[j.lang][x.i]=b.pcm}}
     }
     const get=s=>audio[s.lang][key[s.lang+'|'+s.text]];
     POD.gen='Setze die Folge zusammen …';POD.genPct=92;podGenPaint();
